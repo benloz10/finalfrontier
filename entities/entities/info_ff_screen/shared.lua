@@ -520,7 +520,7 @@ elseif CLIENT then
                 self._lastCursorUpdate = curTime
             end
         else
-            local cx, cy = self:GetCursorPos()
+            local cx, cy = self:GetCursorX(), self:GetCursorY()
             
             if cx ~= self._lastCursorx or cy ~= self._lastCursory then
                 local t = (CurTime() - self._lastCursorUpdate) / CURSOR_UPDATE_FREQ
@@ -569,7 +569,7 @@ elseif CLIENT then
         draw.NoTexture()
         
         cam.Start3D2D(self:GetPos(), ang, 1 / SCREEN_DRAWSCALE)
-        if self._ui then
+        if self._ship and self._room and self._ui then
             self._ui:Draw()
         end
         if self:GetBeingUsed() then

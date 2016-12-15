@@ -307,6 +307,14 @@ function ENT:GetDoorByIndex(index)
     return self._doors[index]
 end
 
+function ENT:GetAvailableTransporterTargets()
+    local available = {}
+    for _, room in ipairs(self._roomlist) do
+        table.Add(available, room:GetAvailableTransporterTargets())
+    end
+    return available
+end
+
 local ply_mt = FindMetaTable("Player")
 function ply_mt:SetShip(ship)
     if self._ship == ship then return end

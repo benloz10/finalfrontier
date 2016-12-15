@@ -132,7 +132,7 @@ if CLIENT then
     SWEP.manX = nil
     SWEP.manY = nil
     function SWEP:Think()
-        if (CurTime()<self.nextThinkStamp) then return end
+        if (CurTime()<self.nextThinkStamp) or LocalPlayer():GetActiveWeapon() ~= self then return end
         
         local trace = self.Owner:GetEyeTraceNoCursor()
         

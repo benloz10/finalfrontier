@@ -29,6 +29,8 @@ _mt.__index = _mt
 _mt._pos = Vector(0, 0, 0)
 _mt._scale = 1
 _mt._clr = Color(255, 255, 255, 255)
+_mt._normx = 0
+_mt._normy = 0
 _mt._pulseFreq = 0
 _mt._pulseScale = 0
 _mt._pulsePhase = 0
@@ -51,6 +53,18 @@ function _mt:SetPulse(period, scale, phase)
     self._pulsePhase = (phase or math.random()) * period
 end
 
+function _mt:SetNormal(nx, ny)
+    self._normx = nx
+    self._normy = ny
+
+    local len = math.sqrt(nx * nx + ny * ny)
+
+    if len > 0 then
+        self._normx = self._normx / len
+        self._normy = self._normy / len
+    end
+end
+
 function _mt:GetScale()
     return self._scale
 end
@@ -61,9 +75,11 @@ end
 
 function _mt:Render(origin, loc, mat)
     local pos = self._pos
+    local nx, ny = 0, 0
 
     if mat then
         pos.x, pos.y = mat:Transform(pos.x, pos.y)
+        nx, ny = mat:Transform(self._normx, self._normy)
     end
 
     if loc then
@@ -98,7 +114,14 @@ function _mt:Render(origin, loc, mat)
     local scale = self._scale
 
     if self._pulseFreq > 0 then
-        scale = scale + math.Round(Pulse(self._pulseFreq, self._pulsePhase)) * self._pulseScale
+        scale = scale + Pulse(self._pulseFreq, self._pulsePhase) * self._pulseScale
+    end
+
+    if nx * nx + ny * ny > 0 then
+        local dx, dy = -pos.x, -pos.y
+        local dl = math.sqrt(dx * dx + dy * dy)
+
+        scale = scale * math.Clamp((nx * dx + ny * dy) / dl, 0, 1)
     end
 
     render.DrawQuadEasy(pos, -pos:GetNormalized(), scale, scale, clr, 0)

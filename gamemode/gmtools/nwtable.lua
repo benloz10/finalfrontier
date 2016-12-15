@@ -18,6 +18,7 @@
 if SERVER then AddCSLuaFile("nwtable.lua") end
 
 local POLL_PERIOD = 0
+local WARNING_LENGTH_THRESHOLD = 16384
 
 if not NWTInfo then
     NWTInfo = {}
@@ -135,6 +136,13 @@ if SERVER then
                 ent._nwts[ident]:SendUpdate(ply, time)
             end
         end
+        
+        local len = net.BytesWritten()
+        if len >= WARNING_LENGTH_THRESHOLD then
+            print("[gmtools] Warning: large NWTableUpdate sent to " .. ply:Name() .. " (" .. tostring(len) .. " bytes)")
+            
+        end
+        
         net.Send(ply)
     end)
 

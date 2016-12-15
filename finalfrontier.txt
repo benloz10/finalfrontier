@@ -1,4 +1,4 @@
-"finalfrontier"
+"Final Frontier"
 {
 	"base"		"base"
 	"title"		"Final Frontier"

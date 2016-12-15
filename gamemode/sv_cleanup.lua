@@ -109,8 +109,10 @@ function GM:PlayerSay(ply, txt, teams)
 				for k, voters in pairs( player.GetAll() ) do
 					voters:ChatPrint( "Time Remaining on Reset Vote: " .. math.Round(votetime-CurTime()) .. " Seconds." )
 				end
+            return ""
 			end )
 		end
+    return ""    
 	end
 if activevote then
 	if ply != voter then
@@ -119,10 +121,12 @@ if activevote then
 				ply:ChatPrint( "You have voted yes" )
 				votes=votes+1
 				table.insert( voted, ply )
+                return ""
 			elseif txt== "/no" then
 				ply:ChatPrint( "You have voted no" )
 				votes=votes-1
 				table.insert( voted, ply )
+                return ""
 			end
 		else
 			ply:ChatPrint( "You already voted" )
@@ -134,10 +138,11 @@ if activevote then
 		--ply:ChatPrint( "You started the vote" )
 	end
 else
-	ply:ChatPrint("There is no vote active")
+    if txt == "/yes" or txt == "/no" then
+        ply:ChatPrint("There is no vote active")
+        return ""
+    end
 end
-
-return ""
 end
 
 function votecheck()
