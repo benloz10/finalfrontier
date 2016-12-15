@@ -1,0 +1,7 @@
+unlitgeneric
+{
+    $basetexture "skybox/sky_ff_defaultFT.vtf"
+    $hdrcompressedtexture "skybox/sky_ff_defaultFT.vtf"
+    $nofog 1
+    $ignorez 1
+}

@@ -1,0 +1,20 @@
+"finalfrontier"
+{
+	"base"		"base"
+	"title"		"Final Frontier"
+	"maps"		"^finalfrontier"
+	"menusystem"	"1"
+
+	"settings"
+	{
+		1
+		{
+			"name"			"ff_autoclean"
+			"text"			"Auto Cleaning"
+			"help"			"Automaticaly cleans up ships that are destroyed"
+			"type"			"CheckBox"
+			"default"		"1"
+			"singleplayer"	"1"
+		}
+	}
+}
