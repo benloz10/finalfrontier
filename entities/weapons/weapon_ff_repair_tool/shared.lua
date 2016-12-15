@@ -43,12 +43,17 @@ SWEP.MAX_DISTANCE = 128
 SWEP.THINK_STEP = 0.1
 SWEP.nextThinkStamp = CurTime()+SWEP.THINK_STEP
 
+if SERVER then
+    CreateConVar( "ff_repair_time", "5", FCVAR_NOTIFY, "Sets the time (In seconds) it takes for the repair tool to finish" )
+end
+
 function SWEP:SetupDataTables()
 
 	self:NetworkVar( "Int", 0, "RepairMode" )
 	self:NetworkVar( "Int", 1, "GreenBoxes" )
 	self:NetworkVar( "Int", 2, "BlueBoxes" )
     self:NetworkVar( "Bool", 0, "UsingWelder" )
+    self:NetworkVar( "Int", 8, "RepairSpeed" )
 end
 
 function SWEP:Initialize()
@@ -164,7 +169,7 @@ if CLIENT then
                     self.manEntity = ent 
                     self.manX = gridx 
                     self.manY = gridy
-                    self.timestampCompleted = CurTime() + self.COOLDOWN
+                    self.timestampCompleted = CurTime() + GetConVar("ff_repair_time"):GetInt()
                 end
             end
         elseif (self:GetUsingWelder()) then
@@ -240,7 +245,7 @@ if CLIENT then
             local barsize = (width - 8 + barspacing) / totbars
             local bars = 10
             if (self:GetUsingWelder()) then
-                bars = math.Clamp(((CurTime()-self.timestampCompleted+self.COOLDOWN)/self.COOLDOWN) * totbars,0,totbars)
+                bars = math.Clamp(((CurTime()-self.timestampCompleted+GetConVar("ff_repair_time"):GetInt())/GetConVar("ff_repair_time"):GetInt()) * totbars,0,totbars)
             end
             
             surface.SetDrawColor(Color(100, 100, 100, 255))
