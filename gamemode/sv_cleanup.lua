@@ -152,13 +152,13 @@ if votetime < CurTime() and !updated then
 	if votes > playercount then
 		for k, voters in pairs( player.GetAll() ) do
 			voters:ChatPrint( "Vote completed. Cleaning Up" )
-			lastvote=CurTimer()+600
+			lastvote=CurTime()+600
 		end
 		Cleanup()
 	else
 		for k, voters in pairs( player.GetAll() ) do
 			voters:ChatPrint( "Vote failed. Not Enough Supporters." )
-			lastvote=CurTimer()+300
+			lastvote=CurTime()+300
 		end
 	end
 timer.Stop("ff_voteingtimer")
