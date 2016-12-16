@@ -43,17 +43,12 @@ SWEP.MAX_DISTANCE = 128
 SWEP.THINK_STEP = 0.1
 SWEP.nextThinkStamp = CurTime()+SWEP.THINK_STEP
 
-if SERVER then
-    CreateConVar( "ff_repair_time", "5", FCVAR_NOTIFY, "Sets the time (In seconds) it takes for the repair tool to finish" )
-end
-
 function SWEP:SetupDataTables()
 
 	self:NetworkVar( "Int", 0, "RepairMode" )
 	self:NetworkVar( "Int", 1, "GreenBoxes" )
 	self:NetworkVar( "Int", 2, "BlueBoxes" )
     self:NetworkVar( "Bool", 0, "UsingWelder" )
-    self:NetworkVar( "Int", 8, "RepairSpeed" )
 end
 
 function SWEP:Initialize()
@@ -61,6 +56,10 @@ function SWEP:Initialize()
     self:SetGreenBoxes(0) 
     self:SetBlueBoxes(0) 
     self:SetUsingWelder(false) 
+end
+
+function SWEP:ShouldDropOnDie()
+    return false
 end
 
 function SWEP:SecondaryAttack()
@@ -137,7 +136,9 @@ if CLIENT then
     SWEP.manX = nil
     SWEP.manY = nil
     function SWEP:Think()
-        if (CurTime()<self.nextThinkStamp) or LocalPlayer():GetActiveWeapon() ~= self then return end
+        if CurTime() < self.nextThinkStamp
+            or LocalPlayer() ~= self.Owner 
+            or LocalPlayer():GetActiveWeapon() ~= self then return end
         
         local trace = self.Owner:GetEyeTraceNoCursor()
         
@@ -169,7 +170,7 @@ if CLIENT then
                     self.manEntity = ent 
                     self.manX = gridx 
                     self.manY = gridy
-                    self.timestampCompleted = CurTime() + GetConVar("ff_repair_time"):GetInt()
+                    self.timestampCompleted = CurTime() + self.COOLDOWN
                 end
             end
         elseif (self:GetUsingWelder()) then
@@ -245,7 +246,7 @@ if CLIENT then
             local barsize = (width - 8 + barspacing) / totbars
             local bars = 10
             if (self:GetUsingWelder()) then
-                bars = math.Clamp(((CurTime()-self.timestampCompleted+GetConVar("ff_repair_time"):GetInt())/GetConVar("ff_repair_time"):GetInt()) * totbars,0,totbars)
+                bars = math.Clamp(((CurTime()-self.timestampCompleted+self.COOLDOWN)/self.COOLDOWN) * totbars,0,totbars)
             end
             
             surface.SetDrawColor(Color(100, 100, 100, 255))
@@ -289,5 +290,4 @@ if CLIENT then
     end
     
 end
-
 

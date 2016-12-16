@@ -36,7 +36,8 @@ function SYS:IsEntityTeleportable(ent)
     return IsValid(ent) and (ent:IsPlayer()
         or ent:GetClass() == "prop_physics"
         or ent:GetClass() == "prop_ff_module"
-        or ent:GetClass() == "prop_ff_weaponmodule")
+        or ent:GetClass() == "prop_ff_weaponmodule"
+        or ent:GetClass() == "prop_ff_bomb")
 end
 
 function SYS:IsObjectTeleportable(obj)
@@ -125,6 +126,7 @@ if SERVER then
         if ent:GetClass() == "prop_physics" then return 0.25 end
         if ent:GetClass() == "prop_ff_module" then return 0.35 end
         if ent:GetClass() == "prop_ff_weaponmodule" then return 0.5 end
+        if ent:GetClass() == "prop_ff_bomb" then return 0.75 end
         return self._nwdata.maxcharge + 1
     end
 

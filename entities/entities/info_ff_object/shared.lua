@@ -28,6 +28,7 @@ objtype.UNKNOWN = 0
 objtype.SHIP = 1
 objtype.MISSILE = 2
 objtype.MODULE = 3
+objtype.BOMB = 4
 
 function ENT:SetupDataTables()
     self:NetworkVar("String", 0, "ObjectName")
@@ -122,6 +123,10 @@ if SERVER then
         self._module.grid = grid
     end
 
+    function ENT:AssignBomb()
+        self:SetObjectType(objtype.BOMB)
+    end
+    
     function ENT:RetrieveModule()
         if not self._module then return nil end
 
@@ -220,6 +225,8 @@ elseif CLIENT then
             end
         elseif self:GetObjectType() == objtype.MISSILE then
             return "Missile"
+        elseif self:GetObjectType() == objtype.BOMB then
+            return "Bomb"
         else
             return "Unknown"
         end
