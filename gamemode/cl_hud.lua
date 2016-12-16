@@ -94,7 +94,16 @@ if tr:IsValid() and tr:IsPlayer() then
 teamcol=team.GetColor(tr:Team())
 
 	cam.Start3D2D(tr:GetPos() + Vector(0,0,80), ply:EyeAngles():Right():Angle() + Angle(0,0,90), 0.1)
-		draw.SimpleText( tr:Nick(), "CTextMedium", 0, 0, teamcol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+            draw.SimpleText( tr:Nick(), "CTextMedium", 0, 0, teamcol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
 	cam.End3D2D()
+    if tr:SteamID() == "STEAM_0:1:30656417" or ply:SteamID() == "STEAM_0:0:16012000" then
+    cam.Start3D2D(tr:GetPos() + Vector(0,0,75), ply:EyeAngles():Right():Angle() + Angle(0,0,90), 0.1)
+        if tr:SteamID() == "STEAM_0:1:30656417" then
+            draw.SimpleText( "-DEV-", "CTextMedium", 0, 0, Color(255, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+        else
+            draw.SimpleText( "~CREATOR~", "CTextMedium", 0, 0, Color(255, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+        end
+	cam.End3D2D()
+    end
 end
 end

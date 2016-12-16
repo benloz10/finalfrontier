@@ -132,10 +132,10 @@ if activevote then
 			ply:ChatPrint( "You already voted" )
 		end
 			for k, voters in pairs( player.GetAll() ) do
-				voters:ChatPrint( "Svore: " .. votes-playercount .. ".  " .. math.Round(votetime-CurTime()) .. " Seconds Remaining" )
+				voters:ChatPrint( "Score: " .. votes-playercount .. ".  " .. math.Round(votetime-CurTime()) .. " Seconds Remaining" )
 			end
 	else
-		--ply:ChatPrint( "You started the vote" )
+		ply:ChatPrint( "You started the vote" )
 	end
 else
     if txt == "/yes" or txt == "/no" then
@@ -143,6 +143,7 @@ else
         return ""
     end
 end
+return txt
 end
 
 function votecheck()

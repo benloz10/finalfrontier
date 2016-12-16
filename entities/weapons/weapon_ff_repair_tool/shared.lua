@@ -48,6 +48,7 @@ function SWEP:SetupDataTables()
 	self:NetworkVar( "Int", 0, "RepairMode" )
 	self:NetworkVar( "Int", 1, "GreenBoxes" )
 	self:NetworkVar( "Int", 2, "BlueBoxes" )
+    self:NetworkVar( "Float", 0, "RepairSpeed" )
     self:NetworkVar( "Bool", 0, "UsingWelder" )
 end
 
@@ -56,6 +57,13 @@ function SWEP:Initialize()
     self:SetGreenBoxes(0) 
     self:SetBlueBoxes(0) 
     self:SetUsingWelder(false) 
+    self:SetRepairSpeed(5)
+    if SERVER then
+        concommand.Add( "ff_repair_speed", function(ply, cmd, args)
+            self:SetRepairSpeed(args[1] or 5)
+        end )
+    end
+    
 end
 
 function SWEP:ShouldDropOnDie()
@@ -170,7 +178,7 @@ if CLIENT then
                     self.manEntity = ent 
                     self.manX = gridx 
                     self.manY = gridy
-                    self.timestampCompleted = CurTime() + self.COOLDOWN
+                    self.timestampCompleted = CurTime() + self:GetRepairSpeed()
                 end
             end
         elseif (self:GetUsingWelder()) then
@@ -246,7 +254,7 @@ if CLIENT then
             local barsize = (width - 8 + barspacing) / totbars
             local bars = 10
             if (self:GetUsingWelder()) then
-                bars = math.Clamp(((CurTime()-self.timestampCompleted+self.COOLDOWN)/self.COOLDOWN) * totbars,0,totbars)
+                bars = math.Clamp(((CurTime()-self.timestampCompleted+self:GetRepairSpeed())/self:GetRepairSpeed()) * totbars,0,totbars)
             end
             
             surface.SetDrawColor(Color(100, 100, 100, 255))
