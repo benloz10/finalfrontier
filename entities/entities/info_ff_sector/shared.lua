@@ -87,14 +87,16 @@ if SERVER then
             obj:SetCoordinates(x + math.random(), y + math.random())
             obj:Spawn()
 
-            if math.random() < 0.75 then
+            if math.random() < 0.70 then
                 obj:AssignRoomModule(table.Random({
                     moduletype.LIFE_SUPPORT,
                     moduletype.SHIELDS,
                     moduletype.SYSTEM_POWER
                 }), nil)
-            else
+            elseif math.random() < 0.95 then
                 obj:AssignWeaponModule()
+            else
+                obj:AssignBomb()
             end
         end
     end

@@ -114,7 +114,12 @@ if SERVER then
         effectData:SetOrigin(self:GetPos());
         effectData:SetScale(8);	
         util.Effect("Explosion", effectData, true, true);
-        util.BlastDamage( self, self, self:GetPos(), 1000, 80 )
+        dmginfo = DamageInfo()
+        dmginfo:SetAttacker(self)
+        dmginfo:SetDamage(150)
+        dmginfo:SetDamageType(DMG_BLAST)
+        dmginfo:SetInflictor(self)
+        util.BlastDamageInfo( dmginfo, self:GetPos(), 1000 )
     end;
     /*
     function ENT:Damage(room)
@@ -188,7 +193,12 @@ if CLIENT then
             end
             surface.DrawRect(-150, -125, 302, 60)
             draw.SimpleText("Arm", "CTextSmall", 0, -96, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(25, 25, 25, 100));
-            draw.SimpleText(math.Round(HitPosition.y, 2) .. "," .. math.Round(HitPosition.x, 2), "CTextTiny", 0, 0, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(25, 25, 25, 100));
+            draw.SimpleText("Explosive Photon Device", "CTextTiny", 0, -40, Color(255, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(25, 25, 25, 100));
+            draw.SimpleText("___________________________", "CTextTiny", 0, -27, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(25, 25, 25, 100));
+            draw.SimpleText("This device emits a large", "CTextTiny", 0, 5, Color(255, 200, 200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(25, 25, 25, 100));
+            draw.SimpleText("amount of charged photons", "CTextTiny", 0, 25, Color(255, 200, 200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(25, 25, 25, 100));
+            draw.SimpleText("that cause extreme damage", "CTextTiny", 0, 45, Color(255, 200, 200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(25, 25, 25, 100));
+            draw.SimpleText("to anyone inside it's LOS", "CTextTiny", 0, 65, Color(255, 200, 200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(25, 25, 25, 100));
         cam.End3D2D()
         
         cam.Start3D2D(self:GetPos() + ang2:Up() * 6.5, ang2, 0.05)

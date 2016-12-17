@@ -115,6 +115,7 @@ end
 concommand.Add("ff_reset", function()
     for _, mdl in ipairs(ents.FindByClass("prop_ff_module")) do mdl:Remove() end
     for _, mdl in ipairs(ents.FindByClass("prop_ff_weaponmodule")) do mdl:Remove() end
+    for _, mdl in ipairs(ents.FindByClass("prop_ff_bomb")) do mdl:Remove() end
 
     for _, obj in ipairs(ents.FindByClass("info_ff_object")) do
         if obj:GetObjectType() ~= objtype.SHIP then
@@ -122,6 +123,11 @@ concommand.Add("ff_reset", function()
         end
     end
 
+    for k, ply in pairs(player.GetAll()) do
+        ply:SetHealth(100)
+        ply:SetArmor(100)
+    end
+    
     for _, ship in pairs(ships._dict) do
         ship:Reset()
     end

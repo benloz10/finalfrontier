@@ -178,7 +178,12 @@ if SERVER then
     end
 
     function ENT:OnTakeDamage(dmg)
-        local amount = dmg:GetDamage() / 100
+        local amount = nil
+        if dmg:GetInflictor():GetClass() == "prop_ff_bomb" then
+        amount = dmg:GetDamage() / 10
+        else
+        amount = dmg:GetDamage() / 100
+        end
         local threshold = math.pow(math.random(), 2)
         local damaged = false
         while threshold < amount do

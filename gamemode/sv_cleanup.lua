@@ -25,6 +25,11 @@ function Cleanup()
         end
     end
 
+    for k, ply in pairs(player.GetAll()) do
+        ply:SetHealth(100)
+        ply:SetArmor(100)
+    end
+    
     for _, ship in pairs(ships._dict) do
         ship:Reset()
     end

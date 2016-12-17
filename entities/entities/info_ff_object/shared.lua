@@ -125,6 +125,9 @@ if SERVER then
 
     function ENT:AssignBomb()
         self:SetObjectType(objtype.BOMB)
+        
+        self._module = {}
+        self._module.type = moduletype.BOMB
     end
     
     function ENT:RetrieveModule()
@@ -132,12 +135,16 @@ if SERVER then
 
         local mdl = nil
 
-        if self._module.type == moduletype.WEAPON_1 then
-            mdl = ents.Create("prop_ff_weaponmodule")
-            mdl:SetWeapon(self._module.name, self._module.tier)
+        if self._module.type == moduletype.BOMB then
+            mdl = ents.Create("prop_ff_bomb")
         else
-            mdl = ents.Create("prop_ff_module")
-            mdl:SetModuleType(self._module.type)
+            if self._module.type == moduletype.WEAPON_1 then
+                mdl = ents.Create("prop_ff_weaponmodule")
+                mdl:SetWeapon(self._module.name, self._module.tier)
+            else
+                mdl = ents.Create("prop_ff_module")
+                mdl:SetModuleType(self._module.type)
+            end
         end
 
         mdl:Spawn()
@@ -226,7 +233,7 @@ elseif CLIENT then
         elseif self:GetObjectType() == objtype.MISSILE then
             return "Missile"
         elseif self:GetObjectType() == objtype.BOMB then
-            return "Bomb"
+            return "Salvage"
         else
             return "Unknown"
         end

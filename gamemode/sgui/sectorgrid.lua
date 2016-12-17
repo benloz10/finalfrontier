@@ -313,7 +313,7 @@ elseif CLIENT then
                     draw.NoTexture()
                 else
                     surface.SetDrawColor(Color(172, 45, 51, 127))
-                    if ot == objtype.MODULE then
+                    if ot == objtype.MODULE or ot == objtype.BOMB then
                         surface.DrawRect(sx + ox - 4 * scale, sy + oy - 4 * scale,
                             8 * scale, 8 * scale)
                     else

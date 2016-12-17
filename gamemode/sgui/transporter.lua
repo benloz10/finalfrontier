@@ -104,7 +104,7 @@ function GUI:Inspect(obj)
                     self:Inspect(obj)
                     self:GetScreen():UpdateLayout()
                     return true
-                elseif obj:GetObjectType() == objtype.MODULE then
+                elseif obj:GetObjectType() == objtype.MODULE or obj:GetObjectType() == objtype.BOMB then
                     self:GetSystem():StartTeleport(obj)
                 end
                 return false
@@ -149,7 +149,7 @@ function GUI:Inspect(obj)
                     self:Inspect(obj)
                     self:GetScreen():UpdateLayout()
                     return true
-                elseif obj:GetObjectType() == objtype.MODULE then
+                elseif obj:GetObjectType() == objtype.MODULE or obj:GetObjectType() == objtype.BOMB then
                     self:GetSystem():StartTeleport(obj)
                     return true
                 end
