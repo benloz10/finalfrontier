@@ -103,7 +103,49 @@ if SERVER then
         end
         
         if self:GetTimer() <= 0 then
-            self:VisualEffect();
+            self:VisualEffect()
+            local ship = ships.FindCurrentShip(self)
+            
+            for _, room in ipairs(ship._roomlist) do
+                local bounds = room:GetBounds()
+                local min = Vector(bounds.l, bounds.t, -65536)
+                local max = Vector(bounds.r, bounds.b, 65536)
+                
+                for _, ent in pairs(ents.FindInBox(min, max)) do
+                    local pos = ent:GetPos()
+                    if ent == self then
+                        
+                        
+                            local damage = 150
+                            if damage > 0 then
+                            for _, ent in pairs(room:GetEntities()) do
+                                local dmg = self:CreateDamageInfo(room, damage)
+                                if dmg then
+                                    dmg:SetAttacker(room)
+                                    dmg:SetInflictor(room)
+                                    ent:TakeDamageInfo(dmg)
+                                end
+                            end
+
+                            for _, pos in pairs(room:GetTransporterTargets()) do
+                                timer.Simple(math.random() * 0.5, function()
+                                    local ed = EffectData()
+                                    ed:SetOrigin(pos)
+                                    ed:SetScale(1)
+                                    util.Effect("Explosion", ed)
+                                end)
+                            end
+                        else
+                            sound.Play(table.Random(shieldedSounds), room:GetPos(), 100, 70)
+
+                            local effects = room:GetDamageEffects()
+                            local count = math.max(1, #effects * math.random() * 0.5)
+                            for i = 1, count do
+                                effects[i]:PlayEffect()
+                            end
+                        end
+            end end end
+            
             self:Remove()
         end
     end
@@ -114,54 +156,45 @@ if SERVER then
         effectData:SetOrigin(self:GetPos());
         effectData:SetScale(8);	
         util.Effect("Explosion", effectData, true, true);
-        dmginfo = DamageInfo()
-        dmginfo:SetAttacker(self)
-        dmginfo:SetDamage(150)
-        dmginfo:SetDamageType(DMG_BLAST)
-        dmginfo:SetInflictor(self)
+        dmginfo = self:CreateDamageInfo(self, 150)
         util.BlastDamageInfo( dmginfo, self:GetPos(), 1000 )
     end;
-    /*
-    function ENT:Damage(room)
-        local shields = room:GetUnitShields()
-        local damage = 15
-        local ratio = { 0, 0 }
-        local mult = { 4, 4 }
+end
 
-        util.ScreenShake(room:GetPos(), math.sqrt(damage * 0.5), math.random() * 4 + 3, 1.5, 768)
+function ENT:CreateDamageInfo(target, damage)
+        if not IsValid(target) then return nil end
+        
+        local dmg = DamageInfo()
+        dmg:SetDamageType(DMG_BLAST)
+        dmg:SetDamage(damage)
 
-        room:SetUnitShields(shields - math.min(shields, damage * mult) * (1 - ratio))
-        damage = damage - (shields / mult) * (1 - ratio)
-
-        if damage > 0 then
-            for _, ent in pairs(room:GetEntities()) do
-                local dmg = self:CreateDamageInfo(ent, damage)
-                if dmg then
-                    dmg:SetAttacker(room)
-                    dmg:SetInflictor(room)
-                    ent:TakeDamageInfo(dmg)
-                end
-            end
-
-            for _, pos in pairs(room:GetTransporterTargets()) do
-                timer.Simple(math.random() * 0.5, function()
-                    local ed = EffectData()
-                    ed:SetOrigin(pos)
-                    ed:SetScale(1)
-                    util.Effect("Explosion", ed)
-                end)
-            end
-        else
-            sound.Play(table.Random(shieldedSounds), room:GetPos(), 100, 70)
-
-            local effects = room:GetDamageEffects()
-            local count = math.max(1, #effects * math.random() * 0.5)
-            for i = 1, count do
-                effects[i]:PlayEffect()
+        if target:IsPlayer() then
+            dmg:ScaleDamage(self:GetPersonnelMultiplier())
+        elseif target:GetClass() == "prop_ff_module" then
+            local t = target:GetModuleType()
+            if t == moduletype.LIFE_SUPPORT then
+                dmg:ScaleDamage(self:GetLifeSupportModuleMultiplier())
+            elseif t == moduletype.SHIELDS then
+                dmg:ScaleDamage(self:GetShieldModuleMultiplier())
+            elseif t == moduletype.SYSTEM_POWER then
+                dmg:ScaleDamage(self:GetPowerModuleMultiplier())
             end
         end
+
+    return dmg
+end
+
+function ships.FindCurrentShip(ent)
+    local pos = ent:GetPos()
+    for _, ship in pairs(ships._dict) do
+        if ship:IsPointInside(pos.x, pos.y) then return ship end
     end
-    */
+    return nil
+end
+
+function ENT:IsPointInside(x, y)
+    return self:GetBounds():IsPointInside(x, y)
+        and IsPointInsidePolyGroup(self:GetPolygons(), x, y)
 end
 
 if CLIENT then
