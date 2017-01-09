@@ -67,8 +67,8 @@ if SERVER then
         if IsValid(phys) then
             phys:Wake()
         end
+        self.timetick = CurTime()
     end
-    local timetick = CurTime()
     function ENT:Use(ply)
         
         local TraceLine = util.TraceLine({start = ply:GetShootPos(), endpos = ply:GetAimVector() * 128 + ply:GetShootPos(), filter = ply})	
@@ -81,10 +81,10 @@ if SERVER then
             ply:PickupObject(self)
         end
         
-        if inrange(-7.5, 7.6, -6.3, -3.3, HitPosition.x, HitPosition.y ) then
+        if inrange(-7.5, 7.6, -6.3, -3.3, HitPosition.x, HitPosition.y ) and not self:GetArmed() then
             self:EmitSound( "buttons/button6.wav", 75, 100, 1, CHAN_AUTO )
             self:SetArmed(true)
-            timetick = CurTime() + 1
+            self.timetick = CurTime() + 1
         end
     end
     /*
@@ -95,10 +95,10 @@ if SERVER then
     */
     function ENT:Think()
         if self:GetArmed() then
-            if timetick < CurTime() then
+            if self.timetick < CurTime() then
                 self:SetTimer(self:GetTimer()-1)
                 self:EmitSound( "buttons/button17.wav", 75, 100, 1, CHAN_AUTO )
-            timetick = CurTime() + 1
+            self.timetick = CurTime() + 1
             end
         end
         
@@ -199,6 +199,32 @@ end
 
 if CLIENT then
     
+    function ENT:GetPlayerTarget(ply)
+    if CLIENT then
+        ply = ply or LocalPlayer()
+    end
+
+    local ang = self:GetAngles()
+    ang:RotateAroundAxis(ang:Up(), -90)
+
+    local p0 = self:GetPos() + ang:Up() * 11
+    local n = ang:Up()
+    local l0 = ply:GetShootPos()
+    local l = ply:GetAimVector()
+    
+    local d = (p0 - l0):Dot(n) / l:Dot(n)
+
+    local hitpos = (l0 + l * d) - p0
+    local xvec = ang:Forward()
+    local yvec = ang:Right()
+    
+    local x = math.floor(hitpos:DotProduct(xvec) / 5) + 3
+    local y = math.floor(hitpos:DotProduct(yvec) / 5) + 3
+
+    if x < 1 or x > 4 or y < 1 or y > 4 then return nil end
+
+    return x, y
+end
 
     function ENT:Draw()
     self.BaseClass.Draw(self)

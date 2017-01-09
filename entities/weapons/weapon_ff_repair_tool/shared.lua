@@ -38,7 +38,7 @@ SWEP.Secondary.Ammo         = "none"
 SWEP.AllowDelete = false
 SWEP.AllowDrop = false
 
-SWEP.COOLDOWN = 5
+SWEP.COOLDOWN = 2
 SWEP.MAX_DISTANCE = 128
 SWEP.THINK_STEP = 0.1
 SWEP.nextThinkStamp = CurTime()+SWEP.THINK_STEP
@@ -282,7 +282,7 @@ if CLIENT then
     function SWEP:actionTrace()
         local trace = self.Owner:GetEyeTraceNoCursor()
         if (trace.Entity:GetClass()=="prop_ff_module") then 
-            local gridx, gridy = trace.Entity:GetPlayerTargetedTile(ply)
+            local gridx, gridy = trace.Entity:GetPlayerTargetedTile(LocalPlayer())
             if (!gridx || !gridy) then return false end
             
             local grid = trace.Entity:GetGrid()

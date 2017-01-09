@@ -41,7 +41,14 @@ local _models = {
     "models/player/group03/female_05.mdl",
     "models/player/group03/female_06.mdl"
 }
-
+/*
+local _race = {
+    "human",
+    "rockmen",
+    "zoltan",
+    "lanius"
+}
+*/
 if SERVER then
     function PLAYER:Init()
         team.AutoAssign(self.Player)
@@ -58,7 +65,10 @@ if SERVER then
 
         self.Player:SetArmor(100)
         self.Player:SetCanWalk(true)
-
+        /*
+        self.Player:SetPlayerRace( table.Random(_race) )
+        print(self.Player:GetPlayerRace())
+        */
         TeleportArriveEffect(self.Player, self.Player:GetPos())
     end
 
@@ -76,6 +86,7 @@ function PLAYER:SetupDataTables()
     local ply = self.Player or self
 
     ply:NetworkVar("String", 0, "ShipName")
+    //ply:NetworkVar("String", 1, "PlayerRace" )
 
     ply:NetworkVar("Int", 0, "RoomIndex")
 
