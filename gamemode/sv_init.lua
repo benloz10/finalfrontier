@@ -41,6 +41,7 @@ resource.AddFile("materials/objects/ship.png")
 resource.AddFile("materials/objects/missile.png")
 
 resource.AddWorkshop("282752490")
+CreateConVar( "ff_autoclean", 1, FCVAR_ARCHIVE, "Automaticaly cleans up ships that are destroyed" )
 
 MsgN("Loading materials...")
 local files = file.Find("materials/ff_*.vmt", "GAME")
