@@ -164,6 +164,27 @@ if SERVER then
         local score = self:GetRoom():GetModuleScore(moduletype.SYSTEM_POWER)
         return self:GetPower() * ACCELERATION_PER_POWER * (1 + score * 3)
     end
+    
+    function SYS:CanCloak()
+        local reactorSys = self:GetRoom():GetShip():GetSystem("reactor")
+        if reactorSys:GetSystemLimitRatioByName("shields") == 0 and
+        reactorSys:GetSystemLimitRatioByName("piloting") == 0 and
+        reactorSys:GetSystemLimitRatioByName("weapons") == 0 and
+        
+        self:GetRoom():GetShip():GetVel() == 0 then
+            return true
+        else
+            return false
+        end
+    end
+    
+    function SYS:TryCloak()
+        if self:CanCloak() then
+            self:GetRoom():GetShip():SetCloak()
+        else
+            self:GetRoom():GetShip():ErrorCloak()
+        end
+    end
 elseif CLIENT then
     SYS.Icon = Material("systems/piloting.png", "smooth")
 

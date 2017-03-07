@@ -35,6 +35,7 @@ function ENT:SetupDataTables()
     self:NetworkVar("Int", 0, "ObjectType")
     self:NetworkVar("Float", 0, "TargetRotation")
     self:NetworkVar("Float", 1, "MaxAngularVel")
+    self:NetworkVar("Bool", 0, "IsCloakedShip")
     self:NetworkVar("Entity", 0, "Module")
 end
 
@@ -58,6 +59,7 @@ function ENT:Initialize()
 
         self:SetTargetRotation(0)
         self:SetMaxAngularVel(45)
+        self:SetIsCloakedShip(false)
     else
         self._currRotation = self:GetTargetRotation()
     end

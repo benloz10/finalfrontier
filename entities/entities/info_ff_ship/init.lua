@@ -41,6 +41,7 @@ ENT._warnLights = nil
 ENT._warnLightBrushes = nil
 
 ENT._hazardEnd = 0
+ENT._cloakEnd = 0
 
 function ENT:KeyValue(key, value)
     self._nwdata = self._nwdata or {}
@@ -77,6 +78,7 @@ function ENT:Initialize()
     self._nwdata.name = self:GetName()
 
     self._nwdata.hazardmode = true
+    self._nwdata.cloak = false
 
     if not self:GetBaseHealth() then
         self:_SetBaseHealth(1)
@@ -352,6 +354,29 @@ function ENT:GetPlayers()
     end
 
     return self._players
+end
+
+function ENT:ErrorCloak()
+    for _, room in pairs(self:GetRooms()) do
+        room:EmitSound("ambient/alarms/klaxon1.wav")
+    end
+end
+
+function ENT:GetCloaked()
+    return self._nwdata.cloak
+end
+
+function ENT:SetCloak()
+    if self._cloakEnd < CurTime() then
+        self._nwdata.cloak = not self._nwdata.cloak
+        self:GetObject():SetIsCloakedShip(self._nwdata.cloak)
+        self._cloakEnd = CurTime() + 20
+        for _, room in pairs(self:GetRooms()) do
+            room:EmitSound("ambient/levels/citadel/portal_beam_shoot2.wav")
+        end
+    else
+        self:ErrorCloak()
+    end
 end
 
 function ENT:IsPointInside(x, y)

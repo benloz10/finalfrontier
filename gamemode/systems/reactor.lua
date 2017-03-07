@@ -41,6 +41,10 @@ if SERVER then
         return self._limits[system.Name] or 1.0
     end
 
+    function SYS:GetSystemLimitRatioByName(system)
+        return self._limits[system] or 1.0
+    end
+    
     function SYS:GetSystemLimit(system)
         return self:GetSystemLimitRatio(system) * self:GetTotalPower()
     end

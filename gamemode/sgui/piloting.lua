@@ -25,6 +25,7 @@ GUI._zoomSlider = nil
 GUI._sectorLabel = nil
 GUI._coordLabel = nil
 GUI._angleLabel = nil
+GUI._cloakButton = nil
 GUI._powerBar = nil
 
 function GUI:Enter()
@@ -76,25 +77,38 @@ function GUI:Enter()
     self._sectorLabel = sgui.Create(self, "label")
     self._sectorLabel.AlignX = TEXT_ALIGN_CENTER
     self._sectorLabel.AlignY = TEXT_ALIGN_CENTER
-    self._sectorLabel:SetOrigin(colLeft, self._zoomSlider:GetBottom() + 32)
+    self._sectorLabel:SetOrigin(colLeft, self._zoomSlider:GetBottom() + 16)
     self._sectorLabel:SetSize(colWidth, 32)
 
     self._coordLabel = sgui.Create(self, "label")
     self._coordLabel.AlignX = TEXT_ALIGN_CENTER
     self._coordLabel.AlignY = TEXT_ALIGN_CENTER
-    self._coordLabel:SetOrigin(colLeft, self._sectorLabel:GetBottom() + 16)
+    self._coordLabel:SetOrigin(colLeft, self._sectorLabel:GetBottom() + 8)
     self._coordLabel:SetSize(colWidth, 32)
 
     self._angleLabel = sgui.Create(self, "label")
     self._angleLabel.AlignX = TEXT_ALIGN_CENTER
     self._angleLabel.AlignY = TEXT_ALIGN_CENTER
-    self._angleLabel:SetOrigin(colLeft, self._coordLabel:GetBottom() + 16)
+    self._angleLabel:SetOrigin(colLeft, self._coordLabel:GetBottom() + 8)
     self._angleLabel:SetSize(colWidth, 32)
-
+    
+    self._cloakButton = sgui.Create(self, "button")
+    self._cloakButton:SetOrigin(colLeft, self._angleLabel:GetBottom() + 8)
+    self._cloakButton:SetSize(colWidth, 48)
+    self._cloakButton.Text = "Cloak"
+    
     self._powerBar = sgui.Create(self, "powerbar")
     self._powerBar:SetOrigin(colLeft, self:GetHeight() - 64)
     self._powerBar:SetSize(colWidth, 48)
+    
+    if SERVER then
+        self._cloakButton.OnClick = function(btn, button)
+            self:GetSystem():TryCloak()
+            return true
+        end
+    end
 end
+
 
 if CLIENT then
     function GUI:Draw()

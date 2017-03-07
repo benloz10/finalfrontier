@@ -29,6 +29,20 @@ GUI._roomelems = nil
 GUI._totalbar = nil
 GUI._totaltext = nil
 
+function GUI:CanRoomChange(system)
+    if system == self:GetShip():GetSystem("shields") or
+    system == self:GetShip():GetSystem("weapons") or
+    system == self:GetShip():GetSystem("piloting") then
+        if self:GetShip():GetCloaked() then
+            return false
+        else
+            return true
+        end
+    else
+        return true
+    end
+end
+
 function GUI:SetCurrentRoom(room)
     self._curroom = room
 
@@ -61,7 +75,9 @@ function GUI:SetCurrentRoom(room)
         if SERVER then
             self._roomelems.slider.Value = self:GetSystem():GetSystemLimitRatio(system)
             function self._roomelems.slider.OnValueChanged(slider, value)
-                self:GetSystem():SetSystemLimitRatio(system, value)
+                if self:CanRoomChange(system) then
+                    self:GetSystem():SetSystemLimitRatio(system, value)
+                end
             end
         elseif CLIENT then
             function self._roomelems.slider.GetValueText(slider, value)

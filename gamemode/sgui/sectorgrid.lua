@@ -296,7 +296,7 @@ elseif CLIENT then
                 end
 
                 local ot = obj:GetObjectType()
-                if ot == objtype.SHIP or ot == objtype.MISSILE then
+                if not obj:GetIsCloakedShip() then
                     if ot == objtype.SHIP then
                         surface.SetMaterial(SHIP_ICON)
                         if obj == ship:GetObject() then
@@ -308,18 +308,19 @@ elseif CLIENT then
                         surface.SetMaterial(MISSILE_ICON)
                         surface.SetDrawColor(Color(172, 45, 51, 191))
                     end
-                    surface.DrawTexturedRectRotated(sx + ox, sy + oy,
-                        16 * scale, 16 * scale, -obj:GetRotation())
-                    draw.NoTexture()
-                else
-                    surface.SetDrawColor(Color(172, 45, 51, 127))
-                    if ot == objtype.MODULE or ot == objtype.BOMB then
-                        surface.DrawRect(sx + ox - 4 * scale, sy + oy - 4 * scale,
-                            8 * scale, 8 * scale)
-                    else
-                        surface.DrawCircle(sx + ox, sy + oy, 8 * scale)
+                    if ot == objtype.SHIP or ot == objtype.MISSILE then
+                        surface.DrawTexturedRectRotated(sx + ox, sy + oy,
+                            16 * scale, 16 * scale, -obj:GetRotation())
+                        draw.NoTexture()
                     end
                 end
+                    surface.SetDrawColor(Color(172, 45, 51, 90))
+                    if ot == objtype.MODULE or ot == objtype.BOMB or obj:GetIsCloakedShip() then
+                        surface.DrawRect(sx + ox - 4 * scale, sy + oy - 4 * scale,
+                            8 * scale, 8 * scale)
+                    elseif ot != objtype.SHIP then
+                        surface.DrawCircle(sx + ox, sy + oy, 8 * scale)
+                    end
             end
         end
 
