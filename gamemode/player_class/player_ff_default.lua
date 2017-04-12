@@ -63,7 +63,9 @@ if SERVER then
         self.Player:SetShip(ship)
 		self.Player:SetPlayerColor(Vector(teamcol.r/255, teamcol.g/255, teamcol.b/255))
 
-        self.Player:SetArmor(100)
+		self.Player:SetPlyMaxOxygen(100)
+		self.Player:SetPlyOxygen(self.Player:GetPlyMaxOxygen())
+		
         self.Player:SetCanWalk(true)
         /*
         self.Player:SetPlayerRace( table.Random(_race) )
@@ -89,7 +91,9 @@ function PLAYER:SetupDataTables()
     //ply:NetworkVar("String", 1, "PlayerRace" )
 
     ply:NetworkVar("Int", 0, "RoomIndex")
-
+	ply:NetworkVar("Int", 1, "PlyOxygen")
+	ply:NetworkVar("Int", 2, "PlyMaxOxygen")
+	
     ply:NetworkVar("Bool", 0, "UsingScreen")
 
     ply:NetworkVar("Entity", 0, "CurrentScreen")
@@ -101,51 +105,3 @@ end
 SetupPlayerDataTables = PLAYER.SetupDataTables
 
 player_manager.RegisterClass("player_ff_default", PLAYER, "player_default")
-
-if CLIENT then
-    function GM:OnPlayerChat( ply, txt, Team, PlayerIsDead )
-    local nickteamcolor = team.GetColor(ply:Team())
-    local nickteam = team.GetName(ply:Team())
-        if ply:SteamID() == "STEAM_0:1:30656417" then
-            if ply:Alive() then
-            chat.AddText(Color(255, 0, 0, 255), "-DEV- ", nickteamcolor, nickteam, Color(50, 50, 50, 255), "| ", nickteamcolor, ply:Nick(), color_white, ": ", Color(255, 255, 255, 255), txt)
-            else
-            chat.AddText(Color(255, 0, 0, 255), "-DEV- *REKT* ", nickteamcolor, nickteam, Color(50, 50, 50, 255), "| ", nickteamcolor, ply:Nick(), color_white, ": ", Color(255, 255, 255, 255), txt)
-            end
-            return true
-        elseif ply:SteamID() == "STEAM_0:0:16012000" then
-            if ply:Alive() then
-            chat.AddText(Color(255, 0, 0, 255), "~CREATOR~ ", nickteamcolor, nickteam, Color(50, 50, 50, 255), "| ", nickteamcolor, ply:Nick(), color_white, ": ", Color(255, 255, 255, 255), txt)
-            else
-            chat.AddText(Color(255, 0, 0, 255), "~CREATOR~ *REKT* ", nickteamcolor, nickteam, Color(50, 50, 50, 255), "| ", nickteamcolor, ply:Nick(), color_white, ": ", Color(255, 255, 255, 255), txt)
-            end
-            return true
-        
-        elseif ply:IsAdmin() or ply:IsSuperAdmin() then
-            if ply:Alive() then
-            chat.AddText(Color(180, 0, 0, 255), "-ADMIN- ", nickteamcolor, nickteam, Color(50, 50, 50, 255), "| ", nickteamcolor, ply:Nick(), color_white, ": ", Color(255, 255, 255, 255), txt)
-            else
-            chat.AddText(Color(180, 0, 0, 255), "-ADMIN- *REKT* ", nickteamcolor, nickteam, Color(50, 50, 50, 255), "| ", nickteamcolor, ply:Nick(), color_white, ": ", Color(255, 255, 255, 255), txt)
-            end
-            return true
-        else
-        if Team then
-                    if ply:Alive() then
-                    chat.AddText(Color(255, 0, 0, 255), "(TEAM) ", nickteamcolor, nickteam, Color(50, 50, 50, 255), "| ", nickteamcolor, ply:Nick(), color_white, ": ", Color(255, 255, 255, 255), txt)
-                    else
-                    chat.AddText(Color(255, 0, 0, 255), "*DEAD* (TEAM) ", nickteamcolor, nickteam, Color(50, 50, 50, 255), "| ", nickteamcolor, ply:Nick(), color_white, ": ", Color(255, 255, 255, 255), txt)
-                    end
-                    return true
-        end
-        if ply:IsPlayer() then
-        if ply:Alive() then
-                    chat.AddText(Color(255, 0, 0, 255), "", nickteamcolor, nickteam, Color(50, 50, 50, 255), "| ", nickteamcolor, ply:Nick(), color_white, ": ", Color(255, 255, 255, 255), txt)
-                    return true
-        elseif !ply:Alive() then
-                    chat.AddText(Color(255, 0, 0, 255), "*DEAD* ", nickteamcolor, nickteam, Color(50, 50, 50, 255), "| ", nickteamcolor, ply:Nick(), color_white, ": ", Color(255, 255, 255, 255), txt)
-                    return true
-        end
-        end
-        end
-    end
-end

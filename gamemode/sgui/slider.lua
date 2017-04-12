@@ -37,9 +37,18 @@ GUI.TextColorPos = GUI.Color
 if SERVER then
     function GUI:OnClick(x, y, button)
         local oldValue = self.Value
-        self.Value = math.Clamp((x - self:GetLeft() - self.Margin) /
+		
+		if button == MOUSE1 then
+			self.Value = math.Clamp((x - self:GetLeft() - self.Margin) /
             (self:GetWidth() - self.Margin * 2), 0, 1)
-        
+        elseif button == MOUSE2 then
+			if self.Value > 0 then
+				self.Value = 0
+			else
+				self.Value = 1
+			end
+		end
+		
         if self.Snap > 0 then
             self.Value = math.Round(self.Value / self.Snap) * self.Snap
         end

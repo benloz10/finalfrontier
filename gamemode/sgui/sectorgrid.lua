@@ -54,18 +54,24 @@ function GUI:GetCentreCoordinates()
 end
 
 function GUI:GetMinScale()
-    local rangeSize = 8
+    local piloting = self:GetShip():GetSystem("piloting")
+	local rangeSize = 8
+	
+	if piloting and piloting:GetIsSelectingJump() then
+		rangeSize = 15
+	end
+	
     return math.min((self:GetWidth() - 16) / rangeSize, (self:GetHeight() - 16) / rangeSize)
 end
 
 function GUI:GetMinSensorScale()
     local sensors = self:GetShip():GetSystem("sensors")
-    local rangeSize = 0.1
+	local rangeSize = 0.1
 
     if sensors then
         rangeSize = sensors:GetBaseScanRange() * 2
     end
-
+	
     return math.min((self:GetWidth() - 16) / rangeSize, (self:GetHeight() - 16) / rangeSize)
 end
 
@@ -246,7 +252,6 @@ elseif CLIENT then
         local sx, sy = self:CoordinateToScreen(px, py)
         local sensor = ship:GetSystem("sensors")
 
-        local sensor = ship:GetSystem("sensors")
         if sensor then
             surface.SetDrawColor(Color(255, 255, 255, 2))
             surface.DrawCircle(sx + ox, sy + oy, sensor:GetBaseScanRange() * self._curScale)
@@ -289,21 +294,41 @@ elseif CLIENT then
             if ship:IsObjectInRange(obj) then
                 sx, sy = self:CoordinateToScreen(obj:GetCoordinates())
                 local scale = 1
+				local ot = obj:GetObjectType()
+				
                 if obj == closest then
                     scale = 1 + Pulse(1)
                     surface.SetDrawColor(Color(255, 255, 255, 4))
                     surface.DrawCircle(sx + ox, sy + oy, 16)
+					local jumpCharge = obj:GetJumpCharge()
+					if ot == objtype.SHIP then
+						surface.SetFont( "HudHintTextSmall" )
+						surface.SetTextColor( 255, 255, 255, 255 )
+						surface.SetTextPos( sx + ox+15, sy + oy-5 )
+						surface.DrawText( obj:GetDescription() .. "|Operational")
+						surface.SetTextPos( sx + ox+15, sy + oy+5 )
+						surface.DrawText( "Class: Kestrel" )
+						surface.SetTextPos( sx + ox+15, sy + oy+15 )
+						surface.DrawText( "JD Charge: " .. math.Round(jumpCharge*100) .. "%")
+					end
                 end
 
-                local ot = obj:GetObjectType()
+                
                 if not obj:GetIsCloakedShip() then
                     if ot == objtype.SHIP then
+						
+						if obj:GetIsJumpingShip() and obj != closest then
+							surface.SetDrawColor(Color(255, 255, 255, 4))
+							surface.DrawCircle(sx + ox, sy + oy, (20*math.sin(CurTime())) * scale)
+						end
                         surface.SetMaterial(SHIP_ICON)
                         if obj == ship:GetObject() then
                             surface.SetDrawColor(Color(51, 172, 45, 255))
                         else 
                             surface.SetDrawColor(Color(172, 45, 51, 191))
                         end
+						
+						
                     elseif ot == objtype.MISSILE then
                         surface.SetMaterial(MISSILE_ICON)
                         surface.SetDrawColor(Color(172, 45, 51, 191))

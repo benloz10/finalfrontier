@@ -73,12 +73,12 @@ if SERVER then
 				if ply:GetRoom() == self:GetRoom() then
                 if (ply:Health() < ply:GetMaxHealth()) then
 					ply:SetHealth(math.min(ply:Health() + 1, ply:GetMaxHealth()))
-					self._nwdata.charge = self._nwdata.charge - 5
+					self._nwdata.charge = self._nwdata.charge - 2
 					needsUpdate = true
                 end
-                if ply:Armor() < 100 then
-                    ply:SetArmor(ply:Armor() + 1)
-                    self._nwdata.charge = self._nwdata.charge - 5
+                if ply:GetPlyOxygen() < ply:GetPlyMaxOxygen() then
+                    ply:SetPlyOxygen(ply:GetPlyOxygen() + 1)
+                    self._nwdata.charge = self._nwdata.charge - 2
                     needsUpdate = true
                 end end
                 

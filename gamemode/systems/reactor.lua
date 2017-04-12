@@ -40,10 +40,6 @@ if SERVER then
     function SYS:GetSystemLimitRatio(system)
         return self._limits[system.Name] or 1.0
     end
-
-    function SYS:GetSystemLimitRatioByName(system)
-        return self._limits[system] or 1.0
-    end
     
     function SYS:GetSystemLimit(system)
         return self:GetSystemLimitRatio(system) * self:GetTotalPower()
@@ -102,7 +98,7 @@ if SERVER then
         local score = self:GetRoom():GetModuleScore(moduletype.SYSTEM_POWER)
         return 5 + score * 20
     end
-elseif CLIENT then
+	elseif CLIENT then
     SYS.Icon = Material("systems/reactor.png", "smooth")
 
     function SYS:GetTotalPower()

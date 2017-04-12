@@ -43,6 +43,10 @@ ENT._warnLightBrushes = nil
 ENT._hazardEnd = 0
 ENT._cloakEnd = 0
 
+ENT._jumptargetx = 0
+ENT._jumptargety = 0
+ENT._jumpDamageDelay = 0
+
 function ENT:KeyValue(key, value)
     self._nwdata = self._nwdata or {}
 
@@ -158,11 +162,105 @@ function ENT:Reset()
 
     self:SetHazardMode(false)
 end
+local chargeFireSingle = true
+
+function ENT:SetJumpTarget(x,y)
+	self._jumptargetx = x
+	self._jumptargety = y
+end
 
 function ENT:Think()
-    if self:GetHazardMode() and CurTime() > self._hazardEnd then
+	if self:GetHazardMode() and CurTime() > self._hazardEnd then
         self:SetHazardMode(false)
     end
+	
+	if self:GetSystem("piloting"):GetIsJumping() then
+	
+		if self:GetSystem("piloting"):CheckJumpInterrupt() and self._jumpDamageDelay < CurTime() then
+			self:DoRoomDamage(100, table.Random(self:GetRooms()))
+			self._jumpDamageDelay = CurTime() + math.random(1, 2.5)
+			self._jumptargetx = math.random(self._jumptargetx-5, self._jumptargetx+5)
+			self._jumptargety = math.random(self._jumptargety-5, self._jumptargety+5)
+			
+		end
+		
+		self:GetObject():SetIsJumpingShip(true)
+		self:GetObject():SetJumpCharge(self:GetSystem("piloting"):GetJumpCharge())
+		self:GetSystem("piloting"):SetJumpCharge(self:GetSystem("piloting"):GetJumpCharge()+1)
+		
+		if self:GetSystem("piloting"):GetJumpCharge() > 85 and chargeFireSingle then
+			chargeFireSingle = false
+			
+			self:GetSystem("engineering"):GetRoom():EmitSound("ff_jump_drive")
+			self:GetSystem("piloting"):GetRoom():EmitSound("ff_jump_drive")
+		end
+		if self:GetSystem("piloting"):GetJumpCharge() >= 100 then
+			self:GetSystem("engineering"):GetRoom():StopSound("ff_jump_charge1")
+			self:GetSystem("piloting"):GetRoom():StopSound("ff_jump_charge1")
+			self:GetSystem("engineering"):GetRoom():EmitSound("ff_jump_thunder")
+			self:GetSystem("piloting"):GetRoom():EmitSound("ff_jump_thunder")
+			self:DoJump(self._jumptargetx, self._jumptargety)
+			self:GetSystem("piloting"):SetJumpCharge(0)
+			self:GetSystem("piloting"):SetIsJumping(false)
+			chargeFireSingle = true
+			self:GetObject():SetIsJumpingShip(false)
+			self:GetObject():SetJumpCharge(0)
+		end
+		
+	end
+end
+
+function ENT:CreateDamageInfo(target, damage)
+        if not IsValid(target) then return nil end
+        
+        local dmg = DamageInfo()
+        dmg:SetDamageType(DMG_BLAST)
+        dmg:SetDamage(damage)
+
+        if target:IsPlayer() then
+            dmg:ScaleDamage(1)
+        elseif target:GetClass() == "prop_ff_module" then
+            local t = target:GetModuleType()
+            if t == moduletype.LIFE_SUPPORT then
+                dmg:ScaleDamage(1)
+            elseif t == moduletype.SHIELDS then
+                dmg:ScaleDamage(1)
+            elseif t == moduletype.SYSTEM_POWER then
+                dmg:ScaleDamage(1)
+            end
+        end
+
+    return dmg
+end
+
+function ENT:DoRoomDamage(damage, room)
+	if damage > 0 then
+		for _, ent in pairs(room:GetEntities()) do
+			local dmg = self:CreateDamageInfo(ent, damage)
+			if dmg then
+				dmg:SetAttacker(room)
+				dmg:SetInflictor(room)
+				ent:TakeDamageInfo(dmg)
+			end
+		end
+
+		for _, pos in pairs(room:GetTransporterTargets()) do
+			timer.Simple(math.random() * 0.5, function()
+				local ed = EffectData()
+				ed:SetOrigin(pos)
+				ed:SetScale(1)
+				util.Effect("Explosion", ed)
+			end)
+		end
+	else
+		sound.Play(table.Random(shieldedSounds), room:GetPos(), 100, 70)
+
+		local effects = room:GetDamageEffects()
+		local count = math.max(1, #effects * math.random() * 0.5)
+		for i = 1, count do
+			effects[i]:PlayEffect()
+		end
+	end
 end
 
 function ENT:SetHazardMode(value, duration)
@@ -356,7 +454,7 @@ function ENT:GetPlayers()
     return self._players
 end
 
-function ENT:ErrorCloak()
+function ENT:ErrorSound()
     for _, room in pairs(self:GetRooms()) do
         room:EmitSound("ambient/alarms/klaxon1.wav")
     end
@@ -375,8 +473,13 @@ function ENT:SetCloak()
             room:EmitSound("ambient/levels/citadel/portal_beam_shoot2.wav")
         end
     else
-        self:ErrorCloak()
+        self:ErrorSound()
     end
+end
+
+function ENT:DoJump(x, y)
+	self._nwdata.object:SetCoordinates(x, y)
+    self._nwdata:Update()
 end
 
 function ENT:IsPointInside(x, y)

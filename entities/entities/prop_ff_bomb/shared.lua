@@ -1,4 +1,3 @@
-#NoSimplerr#
 
 -- Created by Lawlypops
 -- 
@@ -115,8 +114,10 @@ if SERVER then
                     local pos = ent:GetPos()
                     if ent == self then
                         
-                        
                             local damage = 150
+							
+							util.ScreenShake(room:GetPos(), math.sqrt(damage * 0.5), math.random() * 4 + 3, 1.5, 768)
+							
                             if damage > 0 then
                             for _, ent in pairs(room:GetEntities()) do
                                 local dmg = self:CreateDamageInfo(room, damage)

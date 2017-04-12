@@ -49,8 +49,11 @@ for i, file in ipairs(files) do
     resource.AddFile("materials/" .. file)
 end
 
-game.ConsoleCommand("sv_loadingurl \"http://finalfrontier.github.io/finalfrontier/\"\n")
-
+if SERVER then
+	game.ConsoleCommand("sv_loadingurl \"http://finalfrontier.github.io/finalfrontier/\"\n")
+else
+	game.ConsoleCommand("sv_loadingurl \"\n")
+end
 -- Gamemode Overrides
 
 function GM:Initialize()

@@ -209,12 +209,8 @@ function ENT:Think()
             dmg:SetInflictor(self)
             for _, ply in pairs(self._players) do
                 if ply and ply:IsValid() and ply:Alive() then
-                    if ply:Armor() > 0 then
-                        if dmg:GetDamageType() == DMG_BURN then
-                        ply:SetArmor(math.Clamp(ply:Armor()- math.min(math.ceil((self:GetTemperature() - 350) / 25), 10), 0, 100))
-                        else
-                        ply:SetArmor(math.Clamp(ply:Armor()- math.min(math.ceil((0.5 - self:GetAtmosphere()) * 10), 10), 0, 100))
-                        end
+                    if ply:GetPlyOxygen() > 0 then
+                        ply:SetPlyOxygen(math.Clamp(ply:GetPlyOxygen()- 1, 0, ply:GetPlyMaxOxygen()))
                     else
                     ply:TakeDamageInfo(dmg)
                     if sounds then
@@ -223,7 +219,11 @@ function ENT:Think()
                     end
                 end
             end
-        end
+        else
+			for _, ply in pairs(self._players) do
+				ply:SetPlyOxygen(math.Clamp(ply:GetPlyOxygen()+ 1, 0, ply:GetPlyMaxOxygen()))
+			end
+		end
         self._lastdamage = CurTime()
     end
 end
