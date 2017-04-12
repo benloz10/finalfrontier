@@ -206,7 +206,11 @@ end
 function ShouldDraw()
     ply = LocalPlayer()
     if ply:GetActiveWeapon():IsValid() then
-        if ply:Health() > 0 and ply:GetActiveWeapon():GetClass() != "gmod_camera" and LHUD_Enabled:GetBool() and GetConVar("cl_drawhud"):GetBool() and not ply:InVehicle() then
+        if ply:Health() > 0
+		and ply:GetActiveWeapon():GetClass() != "gmod_camera"
+		and LHUD_Enabled:GetBool()
+		and GetConVar("cl_drawhud"):GetBool()
+		and not ply:InVehicle() then
             return true
         else
             return false
@@ -250,7 +254,7 @@ function GM:HUDPaint()
         surface.DrawRect( 20+xoffset, ScrH() - 120+yoffset, 100, 100 )
         surface.SetDrawColor( 200, 0, 0, 255 )
         surface.DrawRect( 25+xoffset, ScrH() - 115+yoffset, 90, 90 )
-        draw.SimpleText( ply:Nick(), "LHUD_Font", 350+xoffset+OxySideOffset, ScrH() - 100+yoffset, Color(0, 0, 0), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+        draw.SimpleText( ply:Nick(), "LHUD_Font", 350+xoffset+OxySideOffset, ScrH() - 100+yoffset, Color(255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
         draw.SimpleText( "Ping", "LHUD_Font_Small", 70+xoffset, ScrH() - 110+yoffset, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
         draw.SimpleText( ply:Ping() .. " ms", "LHUD_Font_Small", 70+xoffset, ScrH() - 95+yoffset, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
         draw.SimpleText( "Playtime", "LHUD_Font_Small", 70+xoffset, ScrH() - 70+yoffset, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
@@ -258,9 +262,11 @@ function GM:HUDPaint()
         -----------------------
         
         --HP
-        surface.SetDrawColor( 0, 0, 0, 200 )
-        //surface.DrawRect( 135+xoffset, ScrH()-120+yoffset, 80, 100 )
-        surface.SetDrawColor( 255, 0, 0 )
+		if ply:IsTyping() then
+			surface.SetDrawColor( 255, 0, 0, 20 )
+		else
+			surface.SetDrawColor( 255, 0, 0 )
+		end
         surface.DrawRect( 140+xoffset, ScrH()-50+yoffset,  math.Clamp((oldHealth/10)*70, 0, 70), 10 )
         surface.DrawRect( 140+xoffset, ScrH()-65+yoffset,  math.Clamp(((oldHealth-10)/10)*70, 0, 70), 10 )
         surface.DrawRect( 140+xoffset, ScrH()-80+yoffset,  math.Clamp(((oldHealth-20)/10)*70, 0, 70), 10 )
@@ -284,20 +290,20 @@ function GM:HUDPaint()
         surface.DrawRect( 240+xoffset, ScrH()-170+yoffset, math.Clamp(((oldOxy-80)/10)*70, 0, 70), 10 )
         surface.DrawRect( 240+xoffset, ScrH()-185+yoffset, math.Clamp(((oldOxy-90)/10)*70, 0, 70), 10 )
         
-        draw.SimpleText( "HEALTH", "LHUD_Font_Small", 142+xoffset, ScrH() - 37+yoffset, Color(0, 0, 0), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+        draw.SimpleText( "HEALTH", "LHUD_Font_Small", 142+xoffset, ScrH() - 37+yoffset, Color(255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
         if hp <= 1000000 then
-            draw.SimpleText( math.Round(oldHealth), "LHUD_Font_Small", 175+xoffset, ScrH() - ((oldHealth/100)*150)-60+yoffset, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+            draw.SimpleText( math.Round(oldHealth), "LHUD_Font_Small", 175+xoffset, ScrH() - ((oldHealth/100)*150)-60+yoffset, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
         else
-            draw.SimpleText( "Heckerman", "LHUD_Font_Small", 175+xoffset, ScrH() - ((oldHealth/100)*150)-60+yoffset, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+            draw.SimpleText( "Heckerman", "LHUD_Font_Small", 175+xoffset, ScrH() - ((oldHealth/100)*150)-60+yoffset, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
         end
         
         if oxygen == 0 and oldOxy < 10 then
         else
-            draw.SimpleText( "OXYGEN", "LHUD_Font_Small", 240+xoffset, ScrH() - 37+yoffset, Color(0, 0, 0), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+            draw.SimpleText( "OXYGEN", "LHUD_Font_Small", 240+xoffset, ScrH() - 37+yoffset, Color(255, 255, 255), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
             if hp <= 1000000 then
-                draw.SimpleText( math.Round(oldOxy), "LHUD_Font_Small", 275+xoffset, ScrH() - ((oldOxy/100)*150)-60+yoffset, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+                draw.SimpleText( math.Round(oldOxy), "LHUD_Font_Small", 275+xoffset, ScrH() - ((oldOxy/100)*150)-60+yoffset, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
             else
-                draw.SimpleText( "Heckerman", "LHUD_Font_Small", 275+xoffset, ScrH() - ((oldOxy/100)*150)-60+yoffset, Color(0, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
+                draw.SimpleText( "Heckerman", "LHUD_Font_Small", 275+xoffset, ScrH() - ((oldOxy/100)*150)-60+yoffset, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
             end
         end
         -----------------------

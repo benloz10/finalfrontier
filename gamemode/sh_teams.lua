@@ -65,6 +65,38 @@ if SERVER then
     function team.AutoAssign(ply)
         ply:SetTeam(team.GetLeastPopulated())
     end
+	
+	local lastTeamSwitch = 0
+	
+	function TEAM_1( ply )
+		if lastTeamSwitch < CurTime() then
+			if ply:Team() != 1 then
+				ply:UnSpectate()
+				ply:SetTeam( 1 )
+				ply:Spawn()
+				lastTeamSwitch = CurTime() + 10
+			else ply:ChatPrint( "You are already on this team." ) end
+		else
+			ply:ChatPrint( "You must wait " .. math.Round(lastTeamSwitch - CurTime(), 1) .. " seconds to switch teams." )
+		end
+	end
+	concommand.Add("TEAM_1", TEAM_1)
+	 
+	 
+	function TEAM_2( ply )
+		if lastTeamSwitch < CurTime() then
+			if ply:Team() != 2 then
+				ply:UnSpectate()
+				ply:SetTeam( 2 )
+				ply:Spawn()
+				lastTeamSwitch = CurTime() + 10
+			else ply:ChatPrint( "You are already on this team." ) end
+		else
+			ply:ChatPrint( "You must wait " .. math.Round(lastTeamSwitch - CurTime(), 1) .. " seconds to switch teams." )
+		end
+	end
+	concommand.Add("TEAM_2", TEAM_2)
+	
 elseif CLIENT then
     function team.Think()
         if team._count >= #team._nwdata then return end
@@ -74,4 +106,79 @@ elseif CLIENT then
             team.SetUp(t, data.name, data.color, true)
         end
     end
+	
+	function TeamMenu(  )
+	
+		local TeamMenu = vgui.Create( "DFrame" )
+		TeamMenu:SetPos( ScrW() / 2 - 250, ScrH() / 2 -200 )
+		TeamMenu:SetSize( 260, 210 )
+		TeamMenu:SetTitle( "Team Selection" )
+		TeamMenu:ShowCloseButton( false )
+		TeamMenu:SetVisible( true )
+		TeamMenu:SetDraggable( false )
+		TeamMenu:MakePopup( )
+		function TeamMenu:Paint()
+			draw.RoundedBox( 8, 0, 0, self:GetWide(), self:GetTall(), Color( 0,0,0,200 ) )
+		end 
+		
+		
+		local team_1 = vgui.Create( "DButton", TeamMenu )
+		team_1:SetPos( 5, 30 )
+		team_1:SetSize( 250, 30 )
+		team_1:SetText( "Team 1" )
+		team_1:SetTextColor( Color(255, 255, 255) )
+		
+		team_1.Paint = function()
+			surface.SetDrawColor( team.GetColor(1) )
+			surface.DrawRect( 0, 0, team_1:GetWide(), team_1:GetTall() )
+		end
+		
+		team_1.DoClick = function()
+			RunConsoleCommand( "TEAM_1" )
+			TeamMenu:Close()
+		end
+		
+		
+		local team_2 = vgui.Create( "DButton", TeamMenu )
+		team_2:SetPos( 5, 70 )
+		team_2:SetSize( 250, 30 )
+		team_2:SetText( "Team 2" )
+		team_2:SetTextColor( Color(255, 255, 255) )
+		
+		team_2.Paint = function()
+			surface.SetDrawColor( team.GetColor(2) )
+			surface.DrawRect( 0, 0, team_2:GetWide(), team_2:GetTall() )
+		end
+		
+		team_2.DoClick = function()
+			RunConsoleCommand( "TEAM_2" )
+			TeamMenu:Close()
+		end
+		
+		
+		local close_button = vgui.Create( "DButton", TeamMenu )
+		close_button:SetPos( 5, 185 )
+		close_button:SetSize( 250, 20 )
+		close_button:SetText( "Close this menu" )
+		
+		close_button.Paint = function()
+			draw.RoundedBox( 8, 0, 0, close_button:GetWide(), close_button:GetTall(), Color( 0,0,0,225 ) )
+			surface.DrawRect( 0, 0, close_button:GetWide(), close_button:GetTall() )
+		end
+		
+		close_button.DoClick = function()
+			TeamMenu:Close()
+		end
+	
+	end
+	
+	concommand.Add("TeamMenu", TeamMenu)
+	 
+end
+
+function GM:OnPlayerChat( ply, text, teamChat, isDead )
+	if text == "!ffteam" then
+		RunConsoleCommand("TeamMenu")
+	end
+	return true
 end
