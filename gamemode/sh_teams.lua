@@ -179,6 +179,6 @@ end
 function GM:OnPlayerChat( ply, text, teamChat, isDead )
 	if text == "!ffteam" then
 		RunConsoleCommand("TeamMenu")
+		return true
 	end
-	return true
 end
