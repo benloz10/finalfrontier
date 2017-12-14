@@ -221,7 +221,9 @@ function ENT:Think()
             end
         else
 			for _, ply in pairs(self._players) do
-				ply:SetPlyOxygen(math.Clamp(ply:GetPlyOxygen()+ 1, 0, ply:GetPlyMaxOxygen()))
+				if IsValid(ply) then
+					ply:SetPlyOxygen(math.Clamp(ply:GetPlyOxygen()+ 1, 0, ply:GetPlyMaxOxygen()))
+				end
 			end
 		end
         self._lastdamage = CurTime()

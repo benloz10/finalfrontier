@@ -404,7 +404,7 @@ if SERVER then
             ply:SetUsingScreen(false)
             local oldWep = ply:GetOldWeapon()
             if oldWep and oldWep:IsValid() then
-                ply:SetActiveWeapon(oldWep)
+                ply:SelectWeapon(oldWep:GetClass())
             end
             
             ply:StripWeapon("weapon_ff_unarmed")

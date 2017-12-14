@@ -469,6 +469,11 @@ function ENT:SetCloak()
         self._nwdata.cloak = not self._nwdata.cloak
         self:GetObject():SetIsCloakedShip(self._nwdata.cloak)
         self._cloakEnd = CurTime() + 20
+		
+		local reactor = self:GetSystem("reactor")
+		reactor:SetSystemLimitRatio(self:GetSystem("shields"), 0)
+		reactor:SetSystemLimitRatio(self:GetSystem("weapons"), 0)
+		
         for _, room in pairs(self:GetRooms()) do
             room:EmitSound("ambient/levels/citadel/portal_beam_shoot2.wav")
         end

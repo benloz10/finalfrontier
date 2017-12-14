@@ -49,7 +49,7 @@ function ENT:GetWeapon()
 end
 
 function ENT:GetMaxCharge()
-    return self._weapon:GetMaxCharge()
+    return math.Round(self._weapon:GetMaxCharge())
 end
 
 function ENT:IsFullyCharged()

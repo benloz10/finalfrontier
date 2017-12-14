@@ -1,0 +1,11 @@
+{
+	"title"		:"Final Frontier",
+	"type"		:"gamemode",
+	"tags"		:["fun", "roleplay"],
+	"ignore":
+	[
+		"*.git*",
+		"*.psd*",
+		"*.vcproj*"
+	]
+}

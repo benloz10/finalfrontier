@@ -20,8 +20,6 @@ SYS.SGUIName = "piloting"
 
 SYS.Powered = true
 
-SYS._jumpCharge = 0
-SYS._jumpIsCharging = false
 SYS._isSelectingJump = false
 
 local DURATION_MULTIPLIER = 4
@@ -82,11 +80,11 @@ function SYS:SetJumpCharge(charge)
 end
 
 function SYS:GetIsJumping()
-	return self._jumpIsCharging
+	return self._nwdata._jumpIsCharging
 end
 
 function SYS:SetIsJumping(status)
-	self._jumpIsCharging = status
+	self._nwdata._jumpIsCharging = status
 end
 
 function SYS:GetIsSelectingJump()
@@ -165,6 +163,7 @@ if SERVER then
         self:GetShip():GetObject().PhysicsSimulate = shipPhysicsSimulate
 		
 		self._nwdata._jumpcharge = 0
+		self._nwdata._jumpIsCharging = false
 		self._nwdata:Update()
 		
 		sound.Add( {
@@ -223,17 +222,18 @@ if SERVER then
     function SYS:GetAccelerationMagnitude()
         if self:GetPowerNeeded() <= 0 then return 0 end
         local score = self:GetRoom():GetModuleScore(moduletype.SYSTEM_POWER)
-        return self:GetPower() * ACCELERATION_PER_POWER * (1 + score * 3)
+		local CLOAK_MULTIPLIER = 1
+		if self:GetShip():GetCloaked() then
+			CLOAK_MULTIPLIER = 0.3
+		else
+			CLOAK_MULTIPLIER = 1
+		end
+        return self:GetPower() * (ACCELERATION_PER_POWER * (1 + score * 3))*CLOAK_MULTIPLIER
     end
 	
 	function SYS:CanCloak()
 		local ship = self:GetShip()
-		local reactor = ship:GetSystem("reactor")
-		if  reactor:GetSystemLimitRatio(ship:GetSystem("shields")) == 0 and
-			reactor:GetSystemLimitRatio(ship:GetSystem("piloting")) == 0 and
-			reactor:GetSystemLimitRatio(ship:GetSystem("weapons")) == 0 and
-			
-			self:GetRoom():GetShip():GetVel() == 0 then
+		if self:GetRoom():GetShip():GetVel() == 0 then
 			return true
 		else
 			return false
@@ -255,7 +255,7 @@ if SERVER then
 	
 	function SYS:CheckJumpInterrupt()
 		local reactor = self:GetShip():GetSystem("reactor")
-		if self:GetPower() < self:CalculateJumpPower() then
+		if self:GetPower() < self:CalculateJumpPower() then print(self:GetPower())
 			return true
 		else
 			return false
@@ -272,7 +272,7 @@ if SERVER then
 	
 	
 	function SYS:BeginJump(tx, ty)
-		self._jumpIsCharging = true
+		self._nwdata._jumpIsCharging = true
 		self:FullStop()
 		self:GetShip():SetJumpTarget(tx,ty)
 		

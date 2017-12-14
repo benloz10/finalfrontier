@@ -31,7 +31,6 @@ include("sh_systems.lua")
 include("sv_ships.lua")
 include("sh_teams.lua")
 include("sv_cleanup.lua")
-
 -- Resources
 
 resource.AddFile("materials/circle.png")
@@ -130,6 +129,7 @@ concommand.Add("ff_reset", function()
     for k, ply in pairs(player.GetAll()) do
         ply:SetHealth(100)
         ply:SetArmor(100)
+		ply:SetPlyOxygen(100)
     end
     
     for _, ship in pairs(ships._dict) do

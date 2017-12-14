@@ -18,7 +18,7 @@
 if SERVER then AddCSLuaFile("sh_teams.lua") end
 
 if CLIENT and not team._nwdata then
-    team._count = 0
+    team._count = 0	
 end
 
 team._nwdata = NetworkTable("teams")

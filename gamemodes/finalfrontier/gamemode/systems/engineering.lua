@@ -97,20 +97,19 @@ if SERVER then
             self._nwdata.progress = 0
             self._nwdata.compresult = compresult.NONE
             self._nwdata:Update()
-
+			
             self._sounds[1] = CreateSound(left, "ambient/machines/electric_machine.wav")
             self._sounds[2] = CreateSound(right, "ambient/machines/electric_machine.wav")
-
             self._sounds[1]:PlayEx(0.5, 75)
             self._sounds[2]:PlayEx(0.5, 75)
 
             self:UpdateSounds(1)
+		else
         end
     end
 
     function SYS:UpdateSounds(index)
         if self._nwdata.action == engaction.COMPARE then return end
-
         local left, right = self:GetModules()
         for i, v in pairs(self._sounds) do
             if index > 16 then
