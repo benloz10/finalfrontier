@@ -77,13 +77,17 @@ if SERVER then
             if goal > 0 then
                 local score = 0
                 local shieldModule = room:GetModule(moduletype.SHIELDS)
+				local damageTime = room:GetLastDamage()
                 if shieldModule then
                     score = shieldModule:GetScore() * 2
                 end
                 local rate = ratio * 2 * score - 1
-                if room:GetShields() < goal - 0.001 or rate < 0 then
-                    room:SetUnitShields(room:GetUnitShields() + SHIELD_RECHARGE_RATE * rate * dt)
-                end
+				//print(damageTime - CurTime())
+				if damageTime < CurTime() - 10 then
+					if room:GetShields() < goal - 0.001 or rate < 0 then
+						room:SetUnitShields(room:GetUnitShields() + SHIELD_RECHARGE_RATE * rate * dt)
+					end
+				end
             end
             if room:GetShields() > goal or CurTime() < 10 then
                 room:SetUnitShields(goal * room:GetSurfaceArea())

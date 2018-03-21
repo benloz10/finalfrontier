@@ -26,13 +26,30 @@ ENT._grid = nil
 if SERVER then
     concommand.Add("ff_spawn_module", function(ply, cmd, args)
         if not IsValid(ply) or not cvars.Bool("sv_cheats") then return end
-
+		
+		if args[1] == "?" then
+			print("Arguements: ff_spawn_module <Type 0-2> <Optimal 0-1>")
+			print("Types: 0 = Life Support | 1 = Shield | 2 = Power")
+			return
+		end
         local trace = ply:GetEyeTraceNoCursor()
 
         local mdl = ents.Create("prop_ff_module")
         mdl:SetModuleType(args[1] or math.random(0,2))
         mdl:SetPos(trace.HitPos + trace.HitNormal * 8)
         mdl:Spawn()
+		if tonumber(args[2]) == 1 then
+			for i = 1, 4 do
+				mdl._grid[i] = {}
+				for j = 1, 4 do
+					mdl:SetTile(i, j, _optimalGrids[mdl:GetModuleType()][i][j] )
+				end
+			end
+			print("Spawned most optimal module")
+			mdl._grid:Update()
+		else
+			print("Spawned module with efficiency: " .. mdl:GetScore())
+		end
     end, nil, "Spawn a utility module", FCVAR_CHEAT)
 end
 
@@ -178,12 +195,12 @@ if SERVER then
     end
 
     function ENT:OnTakeDamage(dmg)
-        local amount = nil
-        if dmg:GetInflictor():GetClass() == "prop_ff_bomb" then
-        amount = dmg:GetDamage() / 10
-        else
-        amount = dmg:GetDamage() / 100
-        end
+        local amount = dmg:GetDamage() / 100
+		if dmg:GetAttacker():IsValid() then
+			if dmg:GetAttacker():GetClass() == "prop_ff_bomb" then
+			amount = dmg:GetDamage() / 10
+			end
+		end
         local threshold = math.pow(math.random(), 2)
         local damaged = false
         while threshold < amount do

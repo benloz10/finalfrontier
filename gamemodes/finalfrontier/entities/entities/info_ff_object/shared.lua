@@ -281,6 +281,6 @@ elseif CLIENT then
     end
 
     function ENT:Draw()
-        return
-    end
+		return
+	end
 end

@@ -31,6 +31,7 @@ include("sh_systems.lua")
 include("sv_ships.lua")
 include("sh_teams.lua")
 include("sv_cleanup.lua")
+include("sv_shipcollisions.lua")
 -- Resources
 
 resource.AddFile("materials/circle.png")
@@ -113,6 +114,25 @@ function GM:ScalePlayerDamage(ply, hitgroup, dmginfo)
     if IsValid(attacker) and attacker:IsPlayer() and attacker:Team() == ply:Team() then
         dmginfo:ScaleDamage(0)
     end
+end
+
+CreateConVar( "ff_respawndelay", 15, FCVAR_NONE, "Change the total amount of seconds the player must wait to respawn (Setting it lower than 1 will default to 1)" )
+
+function GM:PlayerDeath(ply)
+	ply.DeathTime = CurTime() + math.Clamp(GetConVarNumber("ff_respawndelay"),1,60)
+	
+end
+
+local RoundedDeathTime = 0
+
+function GM:PlayerDeathThink(ply)
+	if ply.DeathTime < CurTime() then
+		ply:Spawn()
+	else
+		RoundedDeathTime = math.Round(CurTime())+1
+		ply:SetNWInt("NWDeathTime", math.Round(ply.DeathTime+0.5 - CurTime()))
+		return false
+	end
 end
 
 concommand.Add("ff_reset", function()

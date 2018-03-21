@@ -93,6 +93,7 @@ if SERVER then
     function SYS:StartAction(type)
         local left, right = self:GetModules()
         if not self:IsPerformingAction() and left and right then
+			print( "Left Score: " .. left:GetScore() .. ", Right Score: " .. right:GetScore() )
             self._nwdata.action = type
             self._nwdata.progress = 0
             self._nwdata.compresult = compresult.NONE
@@ -131,6 +132,7 @@ if SERVER then
         if self:IsPerformingAction() then
             local left, right = self:GetModules()
             if not IsValid(left) or not IsValid(right) then
+			print("ERROR, INVALID ENT")
                 self:Reset()
                 return
             end

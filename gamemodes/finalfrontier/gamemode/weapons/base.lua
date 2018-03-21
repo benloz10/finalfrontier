@@ -169,6 +169,8 @@ if SERVER then
 
         util.ScreenShake(room:GetPos(), math.sqrt(damage * 0.5), math.random() * 4 + 3, 1.5, 768)
 
+		room:SetLastDamage(CurTime())
+		
         room:SetUnitShields(shields - math.min(shields, damage * mult) * (1 - ratio))
         damage = damage - (shields / mult) * (1 - ratio)
 

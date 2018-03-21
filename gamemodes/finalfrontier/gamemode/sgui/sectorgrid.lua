@@ -301,7 +301,7 @@ elseif CLIENT then
                     surface.SetDrawColor(Color(255, 255, 255, 4))
                     surface.DrawCircle(sx + ox, sy + oy, 16)
 					local jumpCharge = obj:GetJumpCharge()
-					if ot == objtype.SHIP then
+					if ot == objtype.SHIP and not obj:GetIsCloakedShip() then
 						surface.SetFont( "HudHintTextSmall" )
 						surface.SetTextColor( 255, 255, 255, 255 )
 						surface.SetTextPos( sx + ox+15, sy + oy-5 )

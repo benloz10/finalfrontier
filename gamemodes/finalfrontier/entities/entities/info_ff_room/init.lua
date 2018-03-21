@@ -43,6 +43,7 @@ ENT._modules = nil
 ENT._airvolume = 0
 ENT._temperature = 0
 ENT._shields = 0
+ENT._lastshieldimpact = 0
 
 ENT._lastupdate = 0
 ENT._lastdamage = 0
@@ -138,6 +139,15 @@ function ENT:_NextUpdate()
     self._lastupdate = curTime
 
     return dt
+end
+
+function ENT:GetLastDamage()
+	return self._lastshieldimpact
+end
+
+function ENT:SetLastDamage(time)
+	self._lastshieldimpact = time
+	self._nwdata:Update()
 end
 
 function ENT:Think()
@@ -619,6 +629,7 @@ function ENT:HasPlayerWithSecurityPermission()
 
     return false
 end
+
 
 local ply_mt = FindMetaTable("Player")
 function ply_mt:SetPermission(room, perm)

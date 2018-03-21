@@ -46,7 +46,11 @@ if CLIENT then
     function GUI:IsGridLoaded()
         local mdl = self:GetModule()
         if not mdl then return false end
-        return mdl:IsGridLoaded()
+		if mdl:GetModuleType() == 5 then
+			return false
+		else
+			return mdl:IsGridLoaded()
+		end
     end
 
     function GUI:Draw()
@@ -76,7 +80,7 @@ if CLIENT then
             end
 
             surface.SetDrawColor(Color(255, 255, 255, 16))
-            surface.SetMaterial(modulematerials[mdl:GetModuleType() + 1])
+			surface.SetMaterial(modulematerials[mdl:GetModuleType() + 1])
             surface.DrawTexturedRect(cx - 20 * xs, cy - 20 * ys, 40 * xs, 40 * ys)
 
             if self:GetSystem():IsPerformingAction() then

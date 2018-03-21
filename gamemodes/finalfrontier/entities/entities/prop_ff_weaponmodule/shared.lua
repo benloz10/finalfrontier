@@ -100,7 +100,7 @@ if SERVER then
     end
 
     function ENT:CanInsertIntoSlot(slot)
-        return slot:IsWeaponSlot()
+        return slot:IsWeaponSlot()// or slot:IsRepairSlot()
     end
 elseif CLIENT then
     function ENT:Think()
@@ -113,6 +113,10 @@ elseif CLIENT then
         end
     end
 
+	function ENT:GetWeaponIcon()
+		return self._weapon.Icon
+	end
+	
     function ENT:Draw()
         self.BaseClass.Draw(self)
 
@@ -129,6 +133,7 @@ elseif CLIENT then
             surface.DrawRect(-size / 2, -size / 2, size, size)
 
             if self._weapon then
+				local IconMat = 
                 surface.SetTextColor(Color(191, 191, 191, 255))
                 surface.SetFont("CTextLarge")
 
@@ -146,9 +151,11 @@ elseif CLIENT then
 
                 surface.SetTextPos(x, y)
                 surface.DrawText(text)
-
+				
                 surface.SetDrawColor(self._weapon:GetColor())
-                surface.SetMaterial(self._weapon.Icon)
+                if self._weapon.Icon then
+					surface.SetMaterial(self._weapon.Icon)
+				end
                 surface.DrawTexturedRect(-size / 2 + 8, -size / 4 - 8, size / 2 - 16, size / 2 - 16)
                 draw.NoTexture()
 

@@ -53,16 +53,33 @@ if SERVER then
     function PLAYER:Init()
         team.AutoAssign(self.Player)
         self.Player:SetArmor(100)
+		
     end
 
     function PLAYER:Spawn()
         local ship = team.GetShip(self.Player:Team())
         local pad = table.Random(ship:GetAvailableTransporterTargets())
+        //local pad = table.Random(ship:GetRoomByIndex(1):GetAvailableTransporterTargets())
 		local teamcol=team.GetColor(self.Player:Team())
         self.Player:SetPos(pad)
         self.Player:SetShip(ship)
 		self.Player:SetPlayerColor(Vector(teamcol.r/255, teamcol.g/255, teamcol.b/255))
-
+		
+		for _, curship in pairs(ships.GetAll()) do
+			
+			if curship == ship then
+				for _, room in pairs(curship:GetRooms()) do
+					if room:HasPlayerWithSecurityPermission() then return end
+					self.Player:SetPermission(room, permission.SECURITY)
+				end
+			else
+				for _, room in pairs(curship:GetRooms()) do
+					self.Player:SetPermission(room, permission.NONE)
+				end
+			end
+		
+		end
+		
 		self.Player:SetPlyMaxOxygen(100)
 		self.Player:SetPlyOxygen(self.Player:GetPlyMaxOxygen())
 		

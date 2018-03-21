@@ -20,6 +20,8 @@ local BASE = "missilebase"
 WPN.BaseName = BASE
 WPN.CanSpawn = true
 
+WPN.Icon = Material("weapons/venus.png")
+
 WPN.MaxTier = 5
 
 WPN.MaxPower = { 2, 4 }

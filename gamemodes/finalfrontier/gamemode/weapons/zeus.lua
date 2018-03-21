@@ -20,6 +20,8 @@ local BASE = "empbase"
 WPN.BaseName = BASE
 WPN.CanSpawn = true
 
+WPN.Icon = Material("weapons/zeus.png")
+
 WPN.MaxTier = 10
 
 WPN.MaxPower = { 1, 4 }

@@ -33,7 +33,15 @@ function DrawListItem(w, ply, xoffset, playersincolumn)
 	local xpos = (ScrW()/2)-xoffset
 	local ypos = 210+(40*playersincolumn)
 	
-	draw.RoundedBox( 6, xpos, ypos, w/2-14,35, team.GetColor(ply:Team()) )
+	local teamcol = team.GetColor(ply:Team())
+	
+	if ply:Alive() then
+		teamcol.a = 255
+	else
+		teamcol.a = 50
+	end
+	
+	draw.RoundedBox( 6, xpos, ypos, w/2-14,35, teamcol )
 	draw.SimpleText( ply:Nick(), "FF_Scoreboard", xpos+4, ypos + 17, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 	draw.SimpleText( ply:Frags(), "FF_Scoreboard", xpos+300, ypos + 17, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 	draw.SimpleText( ply:Deaths(), "FF_Scoreboard", xpos+350, ypos + 17, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )

@@ -1,3 +1,4 @@
+#NoSimplerr#
 -----------------------------------WHOA THERE PARTNER!----------------------------------
 -- This is an addon created by me, Lawlypops. Do not re-upload! (Unless I have given  --
 -- EXPRESSED permission in the description!) You can use it to learn for yourself, or --
@@ -6,7 +7,18 @@
 --Begin the magic!
 if SERVER then AddCSLuaFile() end
 
+
+
 if CLIENT then
+	surface.CreateFont( 'FF_Death_Font', {
+		font = "arial black",
+		size = 80,
+		weight = 1000,
+		blursize = 0,
+		scanlines = 0,
+		antialias = true
+	} )
+	
 	surface.CreateFont( 'LHUD_Font_Large', {
 		font = "impact",
 		size = 50,
@@ -123,7 +135,6 @@ function GM:HUDPaint()
     end
     
     if ShouldDraw() then
-        --Info
 		--Health
 			drawRadialBar(200, ScrH()-200, hprad, oldHealth, xoffset, yoffset, hpwidth, Color(55,55,60), Color(255,0,0), Color(150,0,0))
 			draw.SimpleText( "HP", "LHUD_Font_Large", 200-xoffset,ScrH()-220+yoffset, Color(200,200,200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
@@ -132,12 +143,16 @@ function GM:HUDPaint()
 			drawRadialBar(350, ScrH()-100, oxyrad, oldOxy, xoffset, yoffset, oxywidth, Color(55,55,60), Color(0,100,255), Color(0,50,150))
 			draw.SimpleText( "OXY", "LHUD_Font", 350-xoffset,ScrH()-115+yoffset, Color(200,200,200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 			draw.SimpleText( math.Round(oldOxy), "LHUD_Font", 350-xoffset,ScrH()-85+yoffset, Color(200,200,200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-        -----------------------
-        
-        --Ammo
-        -----------------------
         
     end
+	--Death screen
+	if ply:Health() <= 0 then
+		surface.SetDrawColor(0,0,0,240)
+		surface.DrawRect(0,0,ScrW(),ScrH())
+		draw.SimpleText( "YOU ARE DEAD", "FF_Death_Font", ScrW()/2, 100, Color(180,0,0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "You will respawn in:", "FF_Death_Font", ScrW()/2, 160, Color(180,0,0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( ply:GetNWInt("NWDeathTime"), "FF_Death_Font", ScrW()/2, 220, Color(180,0,0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+	end
 end
 
 

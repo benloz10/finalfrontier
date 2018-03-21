@@ -20,6 +20,8 @@ local BASE = "shieldbusterbase"
 WPN.BaseName = BASE
 WPN.CanSpawn = true
 
+WPN.Icon = Material("weapons/thor.png")
+
 WPN.MaxTier = 10
 
 WPN.MaxPower = { 0.5, 4 }
