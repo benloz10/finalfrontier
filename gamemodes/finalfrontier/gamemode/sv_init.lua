@@ -48,12 +48,12 @@ local files = file.Find("materials/ff_*.vmt", "GAME")
 for i, file in ipairs(files) do
     resource.AddFile("materials/" .. file)
 end
-
+/*
 if SERVER then
 	game.ConsoleCommand("sv_loadingurl \"http://finalfrontier.github.io/finalfrontier/\"\n")
 else
 	game.ConsoleCommand("sv_loadingurl \"\n")
-end
+end*/
 -- Gamemode Overrides
 
 function GM:Initialize()

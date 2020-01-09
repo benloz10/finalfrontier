@@ -1,4 +1,3 @@
-#NoSimplerr#
 -----------------------------------WHOA THERE PARTNER!----------------------------------
 -- This is an addon created by me, Lawlypops. Do not re-upload! (Unless I have given  --
 -- EXPRESSED permission in the description!) You can use it to learn for yourself, or --

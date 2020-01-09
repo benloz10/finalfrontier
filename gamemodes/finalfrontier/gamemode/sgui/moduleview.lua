@@ -47,7 +47,7 @@ if CLIENT then
         local mdl = self:GetModule()
         if not mdl then return false end
 		if mdl:GetModuleType() == 5 then
-			return false
+			return true
 		else
 			return mdl:IsGridLoaded()
 		end
@@ -58,61 +58,71 @@ if CLIENT then
         xs, ys = xs / 40, ys / 40
 
         local cx, cy = self:GetGlobalCentre()
+		if self:IsGridLoaded() then
+			local mdl = self:GetModule()
+	
+			if mdl:GetModuleType() == 5 then
+				surface.SetDrawColor(mdl:GetWeapon():GetColor())
+				surface.SetMaterial(mdl:GetWeaponIcon())
+				surface.DrawTexturedRect(cx - 20 * xs, cy - 20 * ys, 40 * xs, 40 * ys)
+				
+				surface.SetDrawColor(Color(255, 255, 255, 4))
+				surface.DrawRect(cx - 20 * xs, cy - 20 * ys, 40 * xs, 40 * ys)
+				
+				surface.SetDrawColor(Color(255, 255, 255, 16))
+				surface.DrawOutlinedRect(cx - 20 * xs, cy - 20 * ys, 40 * xs, 40 * ys)
+			else
+				local grid = self:GetGrid()
+				for i = 1, 4 do
+					local x = (i - 2.5) * 10
+					for j = 1, 4 do
+						local y = (j - 2.5) * 10
+						local val = grid[i][j]
+						if val == 0 then
+							surface.SetDrawColor(Color(51, 172, 45, 255))
+						elseif val == 1 then
+							surface.SetDrawColor(Color(45, 51, 172, 255))
+						else
+							surface.SetDrawColor(Color(172, 45, 51, Pulse(1) * 63 + 32))
+						end
+						surface.DrawRect(cx + (x - 4) * xs, cy + (y - 4) * ys, 8 * xs, 8 * ys)
+					end
+				end
 
-        if self:IsGridLoaded() then
-            local mdl = self:GetModule()
-            local grid = self:GetGrid()
+				surface.SetDrawColor(Color(255, 255, 255, 16))
+				surface.SetMaterial(modulematerials[mdl:GetModuleType() + 1])
+				surface.DrawTexturedRect(cx - 20 * xs, cy - 20 * ys, 40 * xs, 40 * ys)
 
-            for i = 1, 4 do
-                local x = (i - 2.5) * 10
-                for j = 1, 4 do
-                    local y = (j - 2.5) * 10
-                    local val = grid[i][j]
-                    if val == 0 then
-                        surface.SetDrawColor(Color(51, 172, 45, 255))
-                    elseif val == 1 then
-                        surface.SetDrawColor(Color(45, 51, 172, 255))
-                    else
-                        surface.SetDrawColor(Color(172, 45, 51, Pulse(1) * 63 + 32))
-                    end
-                    surface.DrawRect(cx + (x - 4) * xs, cy + (y - 4) * ys, 8 * xs, 8 * ys)
-                end
-            end
+				if self:GetSystem():IsPerformingAction() then
+					local progress = math.min(15, math.floor(self:GetSystem():GetActionProgress()))
+					if progress == 0 then
+						self._progX = 1
+						self._progY = 1
+					else
+						local y = math.floor(progress / 4)
+						local x = progress - y * 4
 
-            surface.SetDrawColor(Color(255, 255, 255, 16))
-			surface.SetMaterial(modulematerials[mdl:GetModuleType() + 1])
-            surface.DrawTexturedRect(cx - 20 * xs, cy - 20 * ys, 40 * xs, 40 * ys)
+						self._progX = self._progX + (x + 1 - self._progX) * 0.1
+						self._progY = self._progY + (y + 1 - self._progY) * 0.1
+					end
 
-            if self:GetSystem():IsPerformingAction() then
-                local progress = math.min(15, math.floor(self:GetSystem():GetActionProgress()))
-                if progress == 0 then
-                    self._progX = 1
-                    self._progY = 1
-                else
-                    local y = math.floor(progress / 4)
-                    local x = progress - y * 4
+					local x = (self._progX - 2.5) * 10
+					local y = (self._progY - 2.5) * 10
+					surface.SetDrawColor(Color(255, 255, 255, Pulse(1) * 64 + 127))
+					surface.DrawOutlinedRect(cx + (x - 5) * xs, cy + (y - 5) * ys, 10 * xs, 10 * ys)                
+				end
+			end
+		else
+			surface.SetDrawColor(Color(255, 255, 255, 4))
+			surface.DrawRect(cx - 20 * xs, cy - 20 * ys, 40 * xs, 40 * ys)
 
-                    self._progX = self._progX + (x + 1 - self._progX) * 0.1
-                    self._progY = self._progY + (y + 1 - self._progY) * 0.1
-                end
+			surface.SetDrawColor(Color(255, 255, 255, 16))
+			surface.DrawOutlinedRect(cx - 20 * xs, cy - 20 * ys, 40 * xs, 40 * ys)
 
-                local x = (self._progX - 2.5) * 10
-                local y = (self._progY - 2.5) * 10
-                surface.SetDrawColor(Color(255, 255, 255, Pulse(1) * 64 + 127))
-                surface.DrawOutlinedRect(cx + (x - 5) * xs, cy + (y - 5) * ys, 10 * xs, 10 * ys)                
-            end
-        else
-            surface.SetDrawColor(Color(255, 255, 255, 4))
-            surface.DrawRect(cx - 20 * xs, cy - 20 * ys, 40 * xs, 40 * ys)
-
-            surface.SetDrawColor(Color(255, 255, 255, 16))
-            surface.DrawOutlinedRect(cx - 20 * xs, cy - 20 * ys, 40 * xs, 40 * ys)
-
-            surface.SetDrawColor(Color(255, 255, 255, 16))
-            surface.SetMaterial(modulematerials[4])
-            surface.DrawTexturedRect(cx - 10 * xs, cy - 10 * ys, 20 * xs, 20 * ys)
-        end
-        
+			surface.SetDrawColor(Color(255, 255, 255, 16))
+			surface.SetMaterial(modulematerials[4])
+			surface.DrawTexturedRect(cx - 10 * xs, cy - 10 * ys, 20 * xs, 20 * ys)
+		end
         self.Super[BASE].Draw(self)
     end
 end

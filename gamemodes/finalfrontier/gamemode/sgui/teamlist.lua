@@ -26,7 +26,7 @@ if CLIENT then
 	function ItemPlayerList()
 		local PlayerCount = 0
 		for _, ply in pairs(player.GetAll()) do
-			if ply:Team() == LocalPlayer():Team() and ply != LocalPlayer() then
+			if IsValid(ply) and ply:Team() == LocalPlayer():Team() and ply != LocalPlayer() then
 				local YOffset = PlayerCount*70
 				local HPBGTri = {
 					{ x = 265, y = 35+YOffset },

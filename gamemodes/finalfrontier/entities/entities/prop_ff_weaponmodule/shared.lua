@@ -100,7 +100,7 @@ if SERVER then
     end
 
     function ENT:CanInsertIntoSlot(slot)
-        return slot:IsWeaponSlot()// or slot:IsRepairSlot()
+        return slot:IsWeaponSlot() or slot:IsRepairSlot()
     end
 elseif CLIENT then
     function ENT:Think()
