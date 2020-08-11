@@ -1,17 +1,17 @@
 -- Copyright (c) 2014 James King [metapyziks@gmail.com]
--- 
+--
 -- This file is part of Final Frontier.
--- 
+--
 -- Final Frontier is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU Lesser General Public License as
 -- published by the Free Software Foundation, either version 3 of
 -- the License, or (at your option) any later version.
--- 
+--
 -- Final Frontier is distributed in the hope that it will be useful,
 -- but WITHOUT ANY WARRANTY; without even the implied warranty of
 -- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 -- GNU General Public License for more details.
--- 
+--
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
@@ -37,7 +37,7 @@ GUI.TextColorPos = GUI.Color
 if SERVER then
     function GUI:OnClick(x, y, button)
         local oldValue = self.Value
-		
+
 		if button == MOUSE1 then
 			self.Value = math.Clamp((x - self:GetLeft() - self.Margin) /
             (self:GetWidth() - self.Margin * 2), 0, 1)
@@ -48,7 +48,7 @@ if SERVER then
 				self.Value = 1
 			end
 		end
-		
+
         if self.Snap > 0 then
             self.Value = math.Round(self.Value / self.Snap) * self.Snap
         end
@@ -114,7 +114,7 @@ elseif CLIENT then
             if self.Snap > 0 then
                 value = math.Round(value / self.Snap) * self.Snap
             end
-            
+
             local b = x + self.Margin + (w - self.Margin * 2) * value
 
             if b >= a then
@@ -136,8 +136,11 @@ elseif CLIENT then
     end
 
     function GUI:UpdateLayout(layout)
-        self.Value = layout.value
-
+        if self.CanClick then
+            self.Value = layout.value
+        else
+            layout.value = self.Value
+        end
         self.Super[BASE].UpdateLayout(self, layout)
     end
 end
