@@ -1,17 +1,17 @@
 -- Copyright (c) 2014 James King [metapyziks@gmail.com]
--- 
+--
 -- This file is part of Final Frontier.
--- 
+--
 -- Final Frontier is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU Lesser General Public License as
 -- published by the Free Software Foundation, either version 3 of
 -- the License, or (at your option) any later version.
--- 
+--
 -- Final Frontier is distributed in the hope that it will be useful,
 -- but WITHOUT ANY WARRANTY; without even the implied warranty of
 -- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 -- GNU General Public License for more details.
--- 
+--
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
@@ -73,7 +73,7 @@ function ENT:Initialize()
     self._screens = {}
     self._doorlist = {}
     self._bounds = Bounds()
-    
+
     self._details = {}
     self._detailindices = {}
 
@@ -103,7 +103,7 @@ function ENT:Initialize()
     self:SetIndex(0)
 end
 
-function ENT:InitPostEntity()    
+function ENT:InitPostEntity()
     self:_UpdateShip()
 
     if not self:GetShip() then return end
@@ -162,14 +162,14 @@ function ENT:Think()
     end
 
     breachloss = breachloss * 0.1 * dt
-    
+
     self:SetUnitTemperature(self:GetUnitTemperature() *
         math.max(0, 1 - self:GetSurfaceArea() * TEMPERATURE_LOSS_RATE * dt
             - breachloss) +
         #self:GetPlayers() * PLAYER_HEAT_RATE * dt)
 
     self:SetAirVolume(self:GetAirVolume()
-        - #self:GetPlayers() * AIR_LOSS_RATE * dt 
+        - #self:GetPlayers() * AIR_LOSS_RATE * dt
         - self:GetAirVolume() * breachloss)
 
     local bounds = self:GetBounds()
@@ -194,7 +194,7 @@ function ENT:Think()
                     v:SetActive(true)
                 end
             else
-                if v:IsActive() then 
+                if v:IsActive() then
                     v:SetActive(false)
                 end
             end
@@ -218,7 +218,7 @@ function ENT:Think()
             dmg:SetAttacker(self)
             dmg:SetInflictor(self)
             for _, ply in pairs(self._players) do
-                if ply and ply:IsValid() and ply:Alive() then
+                if ply and ply:IsValid() and ply:Health() > 0 then
                     if ply:GetPlyOxygen() > 0 then
                         ply:SetPlyOxygen(math.Clamp(ply:GetPlyOxygen()- 1, 0, ply:GetPlyMaxOxygen()))
                     else
@@ -231,7 +231,7 @@ function ENT:Think()
             end
         else
 			for _, ply in pairs(self._players) do
-				if IsValid(ply) then
+				if IsValid(ply) and ply:Health() > 0 then
 					ply:SetPlyOxygen(math.Clamp(ply:GetPlyOxygen()+ 1, 0, ply:GetPlyMaxOxygen()))
 				end
 			end
@@ -602,7 +602,7 @@ function ENT:TransmitTemperature(room, delta)
     if delta < 0 then room:TransmitTemperature(self, delta) return end
 
     delta = math.min(delta, self:GetUnitTemperature())
-    
+
     self:SetUnitTemperature(self:GetUnitTemperature() - delta)
     room:SetUnitTemperature(room:GetUnitTemperature() + delta)
 end
@@ -611,7 +611,7 @@ function ENT:TransmitAir(room, delta)
     if delta < 0 then room:TransmitAir(self, delta) return end
 
     delta = math.min(delta, self:GetAirVolume())
-    
+
     self:SetAirVolume(self:GetAirVolume() - delta)
     room:SetAirVolume(room:GetAirVolume() + delta)
 end
