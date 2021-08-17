@@ -1,17 +1,17 @@
 -- Copyright (c) 2014 James King [metapyziks@gmail.com]
--- 
+--
 -- This file is part of Final Frontier.
--- 
+--
 -- Final Frontier is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU Lesser General Public License as
 -- published by the Free Software Foundation, either version 3 of
 -- the License, or (at your option) any later version.
--- 
+--
 -- Final Frontier is distributed in the hope that it will be useful,
 -- but WITHOUT ANY WARRANTY; without even the implied warranty of
 -- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 -- GNU General Public License for more details.
--- 
+--
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
@@ -93,12 +93,11 @@ if SERVER then
     function SYS:StartAction(type)
         local left, right = self:GetModules()
         if not self:IsPerformingAction() and left and right then
-			print( "Left Score: " .. left:GetScore() .. ", Right Score: " .. right:GetScore() )
             self._nwdata.action = type
             self._nwdata.progress = 0
             self._nwdata.compresult = compresult.NONE
             self._nwdata:Update()
-			
+
             self._sounds[1] = CreateSound(left, "ambient/machines/electric_machine.wav")
             self._sounds[2] = CreateSound(right, "ambient/machines/electric_machine.wav")
             self._sounds[1]:PlayEx(0.5, 75)

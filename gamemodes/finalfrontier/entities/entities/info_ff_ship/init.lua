@@ -1,17 +1,17 @@
 -- Copyright (c) 2014 James King [metapyziks@gmail.com]
--- 
+--
 -- This file is part of Final Frontier.
--- 
+--
 -- Final Frontier is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU Lesser General Public License as
 -- published by the Free Software Foundation, either version 3 of
 -- the License, or (at your option) any later version.
--- 
+--
 -- Final Frontier is distributed in the hope that it will be useful,
 -- but WITHOUT ANY WARRANTY; without even the implied warranty of
 -- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 -- GNU General Public License for more details.
--- 
+--
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
@@ -156,11 +156,13 @@ function ENT:Reset()
     for _, door in ipairs(self._doors) do
         door:Reset()
     end
-    
+
     self._nwdata.object:SetCoordinates(5 + math.random() * 0.2 - 0.1, 9 + math.random() * 0.2 - 0.1)
     self._nwdata.object:SetRotation(math.random() * 360)
 
     self:SetHazardMode(false)
+	self:SetCloak(false)
+	self._cloakEnd = 0
 end
 local chargeFireSingle = true
 
@@ -173,46 +175,48 @@ function ENT:Think()
 	if self:GetHazardMode() and CurTime() > self._hazardEnd then
         self:SetHazardMode(false)
     end
-	
-	if self:GetSystem("piloting"):GetIsJumping() then
-	
-		if self:GetSystem("piloting"):CheckJumpInterrupt() and self._jumpDamageDelay < CurTime() then
-			self:DoRoomDamage(100, table.Random(self:GetRooms()))
+
+	local piloting = self:GetSystem("piloting")
+
+	if piloting:GetIsJumping() then
+
+		if piloting:CheckJumpInterrupt() and self._jumpDamageDelay < CurTime() then
+			self:DoRoomDamage(100, table.Random(self:GetRooms()), 1, 1)
 			self._jumpDamageDelay = CurTime() + math.random(1, 2.5)
 			self._jumptargetx = math.random(self._jumptargetx-5, self._jumptargetx+5)
 			self._jumptargety = math.random(self._jumptargety-5, self._jumptargety+5)
-			
+
 		end
-		
+
 		self:GetObject():SetIsJumpingShip(true)
-		self:GetObject():SetJumpCharge(self:GetSystem("piloting"):GetJumpCharge())
-		self:GetSystem("piloting"):SetJumpCharge(self:GetSystem("piloting"):GetJumpCharge()+1)
-		
-		if self:GetSystem("piloting"):GetJumpCharge() > 85 and chargeFireSingle then
+		piloting:SetJumpCharge(piloting:GetJumpCharge()+1)
+		self:GetObject():SetJumpCharge(piloting:GetJumpCharge())
+
+		if piloting:GetJumpCharge() > 85 and chargeFireSingle then
 			chargeFireSingle = false
-			
+
 			self:GetSystem("engineering"):GetRoom():EmitSound("ff_jump_drive")
-			self:GetSystem("piloting"):GetRoom():EmitSound("ff_jump_drive")
+			piloting:GetRoom():EmitSound("ff_jump_drive")
 		end
-		if self:GetSystem("piloting"):GetJumpCharge() >= 100 then
+		if piloting:GetJumpCharge() >= 100 then
 			self:GetSystem("engineering"):GetRoom():StopSound("ff_jump_charge1")
-			self:GetSystem("piloting"):GetRoom():StopSound("ff_jump_charge1")
+			piloting:GetRoom():StopSound("ff_jump_charge1")
 			self:GetSystem("engineering"):GetRoom():EmitSound("ff_jump_thunder")
-			self:GetSystem("piloting"):GetRoom():EmitSound("ff_jump_thunder")
+			piloting:GetRoom():EmitSound("ff_jump_thunder")
 			self:DoJump(self._jumptargetx, self._jumptargety)
-			self:GetSystem("piloting"):SetJumpCharge(0)
-			self:GetSystem("piloting"):SetIsJumping(false)
+			piloting:SetJumpCharge(0)
+			piloting:SetIsJumping(false)
 			chargeFireSingle = true
 			self:GetObject():SetIsJumpingShip(false)
 			self:GetObject():SetJumpCharge(0)
 		end
-		
+
 	end
 end
 
 function ENT:CreateDamageInfo(target, damage)
         if not IsValid(target) then return nil end
-        
+
         local dmg = DamageInfo()
         dmg:SetDamageType(DMG_BLAST)
         dmg:SetDamage(damage)
@@ -233,7 +237,24 @@ function ENT:CreateDamageInfo(target, damage)
     return dmg
 end
 
-function ENT:DoRoomDamage(damage, room)
+local shieldedSounds = {
+	"weapons/physcannon/energy_disintegrate4.wav",
+	"weapons/physcannon/energy_disintegrate5.wav"
+}
+
+function ENT:DoRoomDamage(damage, room, ratio, mult)
+	local damage = damage || 10
+	local shields = room:GetUnitShields()
+	local ratio = ratio || 0
+	local mult = mult || 1
+
+	util.ScreenShake(room:GetPos(), math.sqrt(damage * 0.5), math.random() * 4 + 3, 1.5, 768)
+
+	room:SetLastDamage(CurTime())
+
+	room:SetUnitShields(shields - math.min(shields, damage * mult) * (1 - ratio))
+	damage = damage - (shields / mult) * (1 - ratio)
+
 	if damage > 0 then
 		for _, ent in pairs(room:GetEntities()) do
 			local dmg = self:CreateDamageInfo(ent, damage)
@@ -349,7 +370,7 @@ function ENT:AddRoom(room)
 
     self._roomdict[name] = room
     table.insert(self._roomlist, room)
-    
+
     room:SetIndex(#self._roomlist)
 
     self._nwdata.roomnames[room:GetIndex()] = name
@@ -464,22 +485,32 @@ function ENT:GetCloaked()
     return self._nwdata.cloak
 end
 
-function ENT:SetCloak()
+function ENT:ToggleCloak()
     if self._cloakEnd < CurTime() then
-        self._nwdata.cloak = not self._nwdata.cloak
-        self:GetObject():SetIsCloakedShip(self._nwdata.cloak)
-        self._cloakEnd = CurTime() + 20
-		
-		local reactor = self:GetSystem("reactor")
-		reactor:SetSystemLimitRatio(self:GetSystem("shields"), 0)
-		reactor:SetSystemLimitRatio(self:GetSystem("weapons"), 0)
-		
-        for _, room in pairs(self:GetRooms()) do
-            room:EmitSound("ambient/levels/citadel/portal_beam_shoot2.wav")
-        end
+		self:SetCloak(!self._nwdata.cloak)
     else
         self:ErrorSound()
     end
+end
+
+function ENT:SetCloak(val)
+	self._nwdata.cloak = val
+	self._nwdata:Update()
+	self:GetObject():SetIsCloakedShip(self._nwdata.cloak)
+	self._cloakEnd = CurTime() + 20
+
+	for _, room in pairs(self:GetRooms()) do
+		room:EmitSound("ambient/levels/citadel/portal_beam_shoot2.wav")
+	end
+
+	local reactor = self:GetSystem("reactor")
+	if self._nwdata.cloak then
+		reactor:SetSystemLimitRatio(self:GetSystem("shields"), 0)
+		reactor:SetSystemLimitRatio(self:GetSystem("weapons"), 0)
+	else
+		reactor:SetSystemLimitRatio(self:GetSystem("shields"), 1)
+		reactor:SetSystemLimitRatio(self:GetSystem("weapons"), 1)
+	end
 end
 
 function ENT:DoJump(x, y)

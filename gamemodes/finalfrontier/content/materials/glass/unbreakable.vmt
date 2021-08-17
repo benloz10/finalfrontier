@@ -1,0 +1,10 @@
+LightmappedGeneric
+{
+	"$basetexture"	"glass\unbreakable_alb"
+	"$translucent" "1"
+	"$envmap" "env_cubemap"
+	"$envmapmask" "glass\unbreakable_ref"
+	"$bumpmap" "glass\unbreakable_bmp"
+	"$surfaceprop" "glass"
+
+}

@@ -1,17 +1,17 @@
 -- Copyright (c) 2014 James King [metapyziks@gmail.com]
--- 
+--
 -- This file is part of Final Frontier.
--- 
+--
 -- Final Frontier is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU Lesser General Public License as
 -- published by the Free Software Foundation, either version 3 of
 -- the License, or (at your option) any later version.
--- 
+--
 -- Final Frontier is distributed in the hope that it will be useful,
 -- but WITHOUT ANY WARRANTY; without even the implied warranty of
 -- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 -- GNU General Public License for more details.
--- 
+--
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
@@ -93,7 +93,7 @@ if SERVER then
     function ENT:AssignModule(mdl)
         if mdl:GetClass() == "prop_ff_weaponmodule" then
             self:AssignWeaponModule(mdl:GetWeaponName(), mdl:GetWeaponTier())
-        elseif mdl:GetClass() == "prop_ff_module" then 
+        elseif mdl:GetClass() == "prop_ff_module" then
             self:AssignRoomModule(mdl:GetModuleType(), mdl:GetGrid())
         end
 
@@ -131,11 +131,11 @@ if SERVER then
 
     function ENT:AssignBomb()
         self:SetObjectType(objtype.BOMB)
-        
+
         self._module = {}
         self._module.type = moduletype.BOMB
     end
-    
+
     function ENT:RetrieveModule()
         if not self._module then return nil end
 
@@ -158,7 +158,7 @@ if SERVER then
         if mdl:GetClass() == "prop_ff_module" then
             for x = 1, 4 do for y = 1, 4 do
                 mdl:SetTile(x, y, self._module.grid[x][y])
-            end end 
+            end end
         end
 
         return mdl
@@ -170,7 +170,10 @@ function ENT:GetRotation()
         self:GetTargetRotation() * math.pi / 180) / math.pi * 180
 
     local t = math.max(0, CurTime() - self._lastLerpTime)
-    local vel = math.sign(diff) * math.min(math.abs(diff), t * self:GetMaxAngularVel())
+	local maxSmoothVel = self:GetMaxAngularVel() * math.Clamp(diff/20, -1, 1)
+	if maxSmoothVel < 0.1 and maxSmoothVel > -0.1 then maxSmoothVel = 0 end
+	//print(self:GetMaxAngularVel())
+    local vel = math.sign(diff) * math.abs(t * maxSmoothVel)
 
     self._currRotation = self._currRotation + vel
     self._lastLerpTime = CurTime()
@@ -195,7 +198,7 @@ function ENT:GetVel()
     elseif CLIENT then
         nx, ny = universe:GetUniversePos(self:GetVelocity())
     end
-    
+
     return nx - ox, ny - oy
 end
 

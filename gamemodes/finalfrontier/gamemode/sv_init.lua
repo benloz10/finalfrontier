@@ -1,17 +1,17 @@
 -- Copyright (c) 2014 James King [metapyziks@gmail.com]
--- 
+--
 -- This file is part of Final Frontier.
--- 
+--
 -- Final Frontier is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU Lesser General Public License as
 -- published by the Free Software Foundation, either version 3 of
 -- the License, or (at your option) any later version.
--- 
+--
 -- Final Frontier is distributed in the hope that it will be useful,
 -- but WITHOUT ANY WARRANTY; without even the implied warranty of
 -- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 -- GNU General Public License for more details.
--- 
+--
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
@@ -40,7 +40,7 @@ resource.AddFile("materials/playerdot.png")
 resource.AddFile("materials/objects/ship.png")
 resource.AddFile("materials/objects/missile.png")
 
-resource.AddWorkshop("282752490")
+//resource.AddWorkshop("282752490")
 CreateConVar( "ff_autoclean", 1, FCVAR_ARCHIVE, "Automaticaly cleans up ships that are destroyed" )
 
 MsgN("Loading materials...")
@@ -48,25 +48,18 @@ local files = file.Find("materials/ff_*.vmt", "GAME")
 for i, file in ipairs(files) do
     resource.AddFile("materials/" .. file)
 end
-/*
-if SERVER then
-	game.ConsoleCommand("sv_loadingurl \"http://finalfrontier.github.io/finalfrontier/\"\n")
-else
-	game.ConsoleCommand("sv_loadingurl \"\n")
-end*/
--- Gamemode Overrides
 
 function GM:Initialize()
     MsgN("Final Frontier server-side is initializing...")
-    
+
     math.randomseed(os.time())
-    
+
     self.BaseClass:Initialize()
 end
 
 function GM:InitPostEntity()
     MsgN("Final Frontier server-side is initializing post-entity...")
-    
+
     ships.InitPostEntity()
 end
 
@@ -74,7 +67,7 @@ function GM:PlayerNoClip(ply)
     return ply:GetMoveType() == MOVETYPE_NOCLIP
 end
 
-function GM:PlayerInitialSpawn(ply)   
+function GM:PlayerInitialSpawn(ply)
     player_manager.SetPlayerClass(ply, "player_ff_default")
 end
 
@@ -120,13 +113,13 @@ CreateConVar( "ff_respawndelay", 15, FCVAR_NONE, "Change the total amount of sec
 
 function GM:PlayerDeath(ply)
 	ply.DeathTime = CurTime() + math.Clamp(GetConVarNumber("ff_respawndelay"),1,60)
-	
+
 end
 
 local RoundedDeathTime = 0
 
 function GM:PlayerDeathThink(ply)
-	if ply.DeathTime < CurTime() then
+	if IsValid(ply) and ply.DeathTime < CurTime() then
 		ply:Spawn()
 	else
 		RoundedDeathTime = math.Round(CurTime())+1
@@ -134,6 +127,8 @@ function GM:PlayerDeathThink(ply)
 		return false
 	end
 end
+
+local _optimalGrids = NetworkTable("optimalGrids")
 
 concommand.Add("ff_reset", function()
     for _, mdl in ipairs(ents.FindByClass("prop_ff_module")) do mdl:Remove() end
@@ -151,8 +146,13 @@ concommand.Add("ff_reset", function()
         ply:SetArmor(100)
 		ply:SetPlyOxygen(100)
     end
-    
+
     for _, ship in pairs(ships._dict) do
         ship:Reset()
     end
+
+	for t = 0, 2 do
+        _optimalGrids[t] = GenerateModuleGrid()
+    end
+    _optimalGrids:Update()
 end)

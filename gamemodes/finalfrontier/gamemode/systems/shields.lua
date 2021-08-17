@@ -1,17 +1,17 @@
 -- Copyright (c) 2014 James King [metapyziks@gmail.com]
--- 
+--
 -- This file is part of Final Frontier.
--- 
+--
 -- Final Frontier is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU Lesser General Public License as
 -- published by the Free Software Foundation, either version 3 of
 -- the License, or (at your option) any later version.
--- 
+--
 -- Final Frontier is distributed in the hope that it will be useful,
 -- but WITHOUT ANY WARRANTY; without even the implied warranty of
 -- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 -- GNU General Public License for more details.
--- 
+--
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
@@ -25,10 +25,10 @@ if SERVER then
 
     local SHIELD_RECHARGE_RATE = 2.5
     local SHIELD_POWER_PER_M2 = 0.004
-    
+
     SYS._distrib = nil
     SYS._startTime = 0
-    
+
     function SYS:Initialize()
         self._distrib = {}
 
@@ -42,7 +42,7 @@ if SERVER then
     function SYS:GetDistrib(room)
         return self._distrib[room:GetName()] or 1.0
     end
-    
+
     function SYS:CalculatePowerNeeded()
         local totNeeded = 0
         for _, room in ipairs(self:GetShip():GetRooms()) do
@@ -82,7 +82,6 @@ if SERVER then
                     score = shieldModule:GetScore() * 2
                 end
                 local rate = ratio * 2 * score - 1
-				//print(damageTime - CurTime())
 				if damageTime < CurTime() - 10 then
 					if room:GetShields() < goal - 0.001 or rate < 0 then
 						room:SetUnitShields(room:GetUnitShields() + SHIELD_RECHARGE_RATE * rate * dt)
