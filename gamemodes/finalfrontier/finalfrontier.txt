@@ -4,6 +4,7 @@
 	"title"		"Final Frontier"
 	"maps"		"^finalfrontier"
 	"menusystem"	"1"
+	"workshopid"    "817353593"
 
 	"settings"
 	{
