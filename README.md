@@ -1,6 +1,7 @@
 # finalfrontier
 
 This is a gamemode meant for Garry's Mod, originaly developed by Metapyziks, now updated and (somewhat) maintained by me, Lawlypops.
+Feel free to take a peek at it and if you have any issues, you can submit a bug report, or if you're a programmer, branch and make a pull request.
 
 Installation:
 1. Place the finalfrontier-master folder into ..\steamapps\common\GarrysMod\garrysmod\addons
