@@ -1,17 +1,17 @@
 -- Copyright (c) 2014 James King [metapyziks@gmail.com]
--- 
+--
 -- This file is part of Final Frontier.
--- 
+--
 -- Final Frontier is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU Lesser General Public License as
 -- published by the Free Software Foundation, either version 3 of
 -- the License, or (at your option) any later version.
--- 
+--
 -- Final Frontier is distributed in the hope that it will be useful,
 -- but WITHOUT ANY WARRANTY; without even the implied warranty of
 -- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 -- GNU General Public License for more details.
--- 
+--
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
@@ -26,7 +26,7 @@ ENT._grid = nil
 if SERVER then
     concommand.Add("ff_spawn_module", function(ply, cmd, args)
         if not IsValid(ply) or not cvars.Bool("sv_cheats") then return end
-		
+
 		if args[1] == "?" then
 			print("Arguements: ff_spawn_module <Type 0-2> <Optimal 0-1>")
 			print("Types: 0 = Life Support | 1 = Shield | 2 = Power")
@@ -152,13 +152,13 @@ function ENT:GetPlayerTargetedTile(ply)
     local n = ang:Up()
     local l0 = ply:GetShootPos()
     local l = ply:GetAimVector()
-    
+
     local d = (p0 - l0):Dot(n) / l:Dot(n)
 
     local hitpos = (l0 + l * d) - p0
     local xvec = ang:Forward()
     local yvec = ang:Right()
-    
+
     local x = math.floor(hitpos:DotProduct(xvec) / 5) + 3
     local y = math.floor(hitpos:DotProduct(yvec) / 5) + 3
 
@@ -301,7 +301,7 @@ if SERVER then
 
     function ENT:Think()
         if not IsValid(self) then return end
-        
+
         self.BaseClass.Think(self)
 
         if self:IsInSlot() then
@@ -341,7 +341,7 @@ elseif CLIENT then
         ang:RotateAroundAxis(ang:Up(), -90)
 
         draw.NoTexture()
-        
+
         cam.Start3D2D(self:GetPos() + ang:Up() * 11, ang, 0.5)
             surface.SetDrawColor(Color(0, 0, 0, 255))
             surface.DrawRect(-24, -24, 48, 48)

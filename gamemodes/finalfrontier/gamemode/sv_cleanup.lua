@@ -1,38 +1,22 @@
 -- Created by Lawlypops
--- 
+--
 -- This file is part of Final Frontier.
--- 
+--
 -- Final Frontier is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU Lesser General Public License as
 -- published by the Free Software Foundation, either version 3 of
 -- the License, or (at your option) any later version.
--- 
+--
 -- Final Frontier is distributed in the hope that it will be useful,
 -- but WITHOUT ANY WARRANTY; without even the implied warranty of
 -- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 -- GNU General Public License for more details.
--- 
+--
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
 function Cleanup()
-    for _, mdl in ipairs(ents.FindByClass("prop_ff_module")) do mdl:Remove() end
-    for _, mdl in ipairs(ents.FindByClass("prop_ff_weaponmodule")) do mdl:Remove() end
-
-    for _, obj in ipairs(ents.FindByClass("info_ff_object")) do
-        if obj:GetObjectType() ~= objtype.SHIP then
-            obj:Remove()
-        end
-    end
-
-    for k, ply in pairs(player.GetAll()) do
-        ply:SetHealth(100)
-        ply:SetArmor(100)
-    end
-    
-    for _, ship in pairs(ships._dict) do
-        ship:Reset()
-    end
+    game.ConsoleCommand("ff_reset")
 end
 
 print("LOADED CLEANUP FILE===================================")
@@ -42,7 +26,7 @@ local tobecleaned = false
 local iscleaning = false
 local playercount=table.Count(player.GetAll())
 
-timer.Create( "ff_cleanup_timer", 600, 0, function() 
+timer.Create( "ff_cleanup_timer", 600, 0, function()
 if GetConVar("ff_autoclean"):GetBool() then
 	Cleanup()
 end
@@ -109,7 +93,7 @@ function GM:PlayerSay(ply, txt, teams)
 			table.Empty(voted)
 			activevote=true
 			updated=false
-			
+
 			timer.Create( "ff_voteingtimer", 5, 4, function()
 				for k, voters in pairs( player.GetAll() ) do
 					voters:ChatPrint( "Time Remaining on Reset Vote: " .. math.Round(votetime-CurTime()) .. " Seconds." )
@@ -117,7 +101,7 @@ function GM:PlayerSay(ply, txt, teams)
             return ""
 			end )
 		end
-    return ""    
+    return ""
 	end
 if activevote then
 	if ply != voter then
@@ -152,7 +136,7 @@ return txt
 end
 
 function votecheck()
-	
+
 
 if votetime < CurTime() and !updated then
 	if votes > playercount then

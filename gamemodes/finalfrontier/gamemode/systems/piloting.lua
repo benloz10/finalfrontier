@@ -1,17 +1,17 @@
 -- Copyright (c) 2014 James King [metapyziks@gmail.com]
--- 
+--
 -- This file is part of Final Frontier.
--- 
+--
 -- Final Frontier is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU Lesser General Public License as
 -- published by the Free Software Foundation, either version 3 of
 -- the License, or (at your option) any later version.
--- 
+--
 -- Final Frontier is distributed in the hope that it will be useful,
 -- but WITHOUT ANY WARRANTY; without even the implied warranty of
 -- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 -- GNU General Public License for more details.
--- 
+--
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
@@ -95,6 +95,10 @@ function SYS:SetIsSelectingJump(status)
 	self._isSelectingJump = status
 end
 
+function SYS:GetJumpPowerNeeded()
+	return self._nwdata._jumpPowerNeeded
+end
+
 if SERVER then
     resource.AddFile("materials/systems/piloting.png")
 
@@ -109,7 +113,7 @@ if SERVER then
             if self._nwdata.duration > 0 then
                 self:SetTargetHeading(0, 0)
             end
-            
+
             return Vector(0, 0, 0), Vector(0, 0, 0), SIM_GLOBAL_ACCELERATION
         end
 
@@ -151,9 +155,13 @@ if SERVER then
             return 0
         end
     end
-	
+
 	function SYS:CalculateJumpPower()
-		return self:GetMaximumPower() * 1.2
+		local pwr = self:GetMaximumPower()
+
+		self._nwdata._jumpPowerNeeded = pwr
+		self._nwdata:Update()
+		return pwr
 	end
 
     function SYS:Initialize()
@@ -161,11 +169,12 @@ if SERVER then
 
         self:GetShip():GetObject()._piloting = self
         self:GetShip():GetObject().PhysicsSimulate = shipPhysicsSimulate
-		
+
 		self._nwdata._jumpcharge = 0
 		self._nwdata._jumpIsCharging = false
 		self._nwdata:Update()
-		
+		self:CalculateJumpPower()
+
 		sound.Add( {
 			name = "ff_jump_charge1",
 			channel = CHAN_STATIC,
@@ -230,7 +239,7 @@ if SERVER then
 		end
         return self:GetPower() * (ACCELERATION_PER_POWER * (1 + score * 3))*CLOAK_MULTIPLIER
     end
-	
+
 	function SYS:CanCloak()
 		local ship = self:GetShip()
 		if self:GetRoom():GetShip():GetVel() == 0 then
@@ -243,8 +252,7 @@ if SERVER then
 	function SYS:CanJump()
 		local reactor = self:GetShip():GetSystem("reactor")
 		local piloting = self:GetShip():GetSystem("piloting")
-		print(self:CalculateJumpPower().."/"..reactor:GetTotalPower() - reactor:GetTotalSupplied().." | "..reactor:GetSystemLimit(piloting))
-		
+
 		if self:CalculateJumpPower() <= reactor:GetTotalPower() - reactor:GetTotalSupplied() and
 			reactor:GetSystemLimit(piloting) >= reactor:GetTotalPower() - reactor:GetTotalSupplied() then
 			return true
@@ -252,38 +260,38 @@ if SERVER then
 			return false
 		end
 	end
-	
+
 	function SYS:CheckJumpInterrupt()
 		local reactor = self:GetShip():GetSystem("reactor")
-		if self:GetPower() < self:CalculateJumpPower() then print(self:GetPower())
+		if self:GetPower() < self:CalculateJumpPower() then
 			return true
 		else
 			return false
 		end
 	end
-	
+
 	function SYS:TryCloak()
 		if self:CanCloak() then
-			self:GetShip():SetCloak()
+			self:GetShip():ToggleCloak()
 		else
 			self:GetShip():ErrorSound()
 		end
 	end
-	
-	
+
+
 	function SYS:BeginJump(tx, ty)
 		self._nwdata._jumpIsCharging = true
 		self:FullStop()
 		self:GetShip():SetJumpTarget(tx,ty)
-		
+
 		local sx, sy = self:GetShip():GetCoordinates()
 		local dx, dy = universe:GetDifference(sx, sy, tx, ty)
-		
+
 		self:GetShip():GetObject():SetTargetRotation(math.atan2(dx, dy) / math.pi * 180.0)
 		self:GetShip():GetSystem("engineering"):GetRoom():EmitSound("ff_jump_charge1")
 		self:GetShip():GetSystem("piloting"):GetRoom():EmitSound("ff_jump_charge1")
 	end
-	
+
 	function SYS:TryJump(x, y)
 		if self:CanJump() then
 			self:BeginJump(x, y)
@@ -291,7 +299,7 @@ if SERVER then
 			self:GetShip():ErrorSound()
 		end
 	end
-	
+
 elseif CLIENT then
     SYS.Icon = Material("systems/piloting.png", "smooth")
 

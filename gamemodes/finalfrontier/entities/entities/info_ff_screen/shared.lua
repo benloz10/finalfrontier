@@ -1,17 +1,17 @@
 -- Copyright (c) 2014 James King [metapyziks@gmail.com]
--- 
+--
 -- This file is part of Final Frontier.
--- 
+--
 -- Final Frontier is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU Lesser General Public License as
 -- published by the Free Software Foundation, either version 3 of
 -- the License, or (at your option) any later version.
--- 
+--
 -- Final Frontier is distributed in the hope that it will be useful,
 -- but WITHOUT ANY WARRANTY; without even the implied warranty of
 -- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 -- GNU General Public License for more details.
--- 
+--
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
@@ -29,7 +29,7 @@ local ALARM_TIME = 120
 
 ENT.Type = "anim"
 ENT.Base = "base_anim"
-    
+
 ENT._ship = nil
 ENT._room = nil
 
@@ -99,7 +99,7 @@ if SERVER then
     }
 
     util.AddNetworkString("CursorPos")
-    
+
     ENT._roomName = nil
 
     ENT._lastPage = page.ACCESS
@@ -123,7 +123,7 @@ if SERVER then
             self:SetHeight(tonumber(value) * SCREEN_DRAWSCALE)
         end
     end
-    
+
     function ENT:Initialize()
         self:DrawShadow(false)
     end
@@ -137,7 +137,7 @@ if SERVER then
                 self._ship = self._room:GetShip()
             end
         end
-        
+
         if not self._room then
             Error("Screen at " .. tostring(self:GetPos()) .. " (" .. self:GetName() .. ") has no room!\n")
             return
@@ -302,7 +302,7 @@ if SERVER then
 
     function ENT:PauseAlarmCountdown()
         self:SetAlarmCountInitialTime(self:GetAlarmCounter())
-        if self:GetAlarmCountInitialTime() <= 0 then 
+        if self:GetAlarmCountInitialTime() <= 0 then
             self:StopAlarmCountdown()
             return
         end
@@ -339,7 +339,7 @@ if SERVER then
             end
         end
     end
-    
+
     function ENT:Use(activator, caller)
         if activator:IsPlayer() then
             if not self:GetBeingUsed() and self:GetPos():Distance(activator:EyePos()) <= MAX_USE_DISTANCE then
@@ -349,7 +349,7 @@ if SERVER then
             end
         end
     end
-    
+
     function ENT:StartUsing(ply)
         if self:GetBeingUsed() then return end
         if not IsValid(ply) then return end
@@ -360,7 +360,7 @@ if SERVER then
         ply:SetUsingScreen(true)
         ply:SetCurrentScreen(self)
         ply:SetOldWeapon(ply:GetActiveWeapon())
-        
+
         ply:SetWalkSpeed(50)
         ply:SetCanWalk(false)
         ply:CrosshairDisable()
@@ -393,12 +393,12 @@ if SERVER then
 
         self:EmitSound(table.Random(enableSounds), 95, 100)
     end
-    
+
     function ENT:StopUsing()
         if not self:GetBeingUsed() then return end
 
         self:SetBeingUsed(false)
-        
+
         local ply = self:GetUsingPlayer()
         if IsValid(ply) then
             ply:SetUsingScreen(false)
@@ -406,9 +406,9 @@ if SERVER then
             if oldWep and oldWep:IsValid() then
                 ply:SelectWeapon(oldWep:GetClass())
             end
-            
+
             ply:StripWeapon("weapon_ff_unarmed")
-            
+
             ply:SetWalkSpeed(175)
             ply:SetCanWalk(true)
             ply:CrosshairEnable()
@@ -452,8 +452,8 @@ elseif CLIENT then
     ENT._lastCursory = 0
     ENT._nextCursorx = 0
     ENT._nextCursory = 0
-    
-    function ENT:UpdateLayout()        
+
+    function ENT:UpdateLayout()
         if not self._layout:IsCurrent() then return end
         if not self._ship or not self._ship:IsCurrent() then return end
         if not self._room or not self._room:IsCurrent() then return end
@@ -480,7 +480,7 @@ elseif CLIENT then
         end
 
         self:UpdateLayout()
-        
+
         if not self._using and self:GetBeingUsed() and self:GetUsingPlayer() == LocalPlayer() then
             self._using = true
         elseif self._using and (not self:GetBeingUsed() or self:GetUsingPlayer() ~= LocalPlayer()) then
@@ -500,16 +500,16 @@ elseif CLIENT then
             local n = ang:Forward()
             local l0 = ply:GetShootPos()
             local l = ply:GetAimVector()
-            
+
             local d = (p0 - l0):Dot(n) / l:Dot(n)
-        
+
             local hitpos = (l0 + l * d) - p0
             local xvec = ang:Right()
             local yvec = ang:Up()
-            
+
             self._cursorx = -hitpos:DotProduct(xvec) * SCREEN_DRAWSCALE
             self._cursory = -hitpos:DotProduct(yvec) * SCREEN_DRAWSCALE
-            
+
             local curTime = CurTime()
             if (curTime - self._lastCursorUpdate) > CURSOR_UPDATE_FREQ then
                 net.Start("CursorPos")
@@ -521,10 +521,10 @@ elseif CLIENT then
             end
         else
             local cx, cy = self:GetCursorX(), self:GetCursorY()
-            
+
             if cx ~= self._lastCursorx or cy ~= self._lastCursory then
                 local t = (CurTime() - self._lastCursorUpdate) / CURSOR_UPDATE_FREQ
-                
+
                 if t >= 1 then
                     self._lastCursorx = self._nextCursorx
                     self._lastCursory = self._nextCursory
@@ -540,34 +540,34 @@ elseif CLIENT then
             end
         end
     end
-    
+
     function ENT:DrawCursor()
         local halfwidth = self:GetWidth() * 0.5
         local halfheight = self:GetHeight() * 0.5
-        
+
         local boxSize = SCREEN_DRAWSCALE
-        
+
         local x = self._cursorx
         local y = self._cursory
-        
-        x = math.Clamp(x, -halfwidth + boxSize * 0.5, halfwidth - boxSize * 0.5)
-        y = math.Clamp(y, -halfheight + boxSize * 0.5, halfheight - boxSize * 0.5)
-        
+
+        x = math.floor(math.Clamp(x, -halfwidth + boxSize * 0.5, halfwidth - boxSize * 0.5))
+        y = math.floor(math.Clamp(y, -halfheight + boxSize * 0.5, halfheight - boxSize * 0.5))
+
         surface.SetDrawColor(Color(255, 255, 255, 16))
         surface.DrawLine(x, -halfheight, x, halfheight)
         surface.DrawLine(-halfwidth, y, halfwidth, y)
-        
+
         surface.SetDrawColor(Color(255, 255, 255, 64))
-        surface.DrawOutlinedRect(x - boxSize * 0.5, y - boxSize * 0.5, boxSize, boxSize)
+        surface.DrawOutlinedRect(x - boxSize * 0.5, y - boxSize * 0.5, boxSize+1, boxSize+1)
     end
 
     function ENT:Draw()
         local ang = self:GetAngles()
         ang:RotateAroundAxis(ang:Up(), 90)
         ang:RotateAroundAxis(ang:Forward(), 90)
-        
+
         draw.NoTexture()
-        
+
         cam.Start3D2D(self:GetPos(), ang, 1 / SCREEN_DRAWSCALE)
         if self._ship and self._room and self._ui then
             self._ui:Draw()

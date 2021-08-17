@@ -1,17 +1,17 @@
 -- Copyright (c) 2014 James King [metapyziks@gmail.com]
--- 
+--
 -- This file is part of Final Frontier.
--- 
+--
 -- Final Frontier is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU Lesser General Public License as
 -- published by the Free Software Foundation, either version 3 of
 -- the License, or (at your option) any later version.
--- 
+--
 -- Final Frontier is distributed in the hope that it will be useful,
 -- but WITHOUT ANY WARRANTY; without even the implied warranty of
 -- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 -- GNU General Public License for more details.
--- 
+--
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
@@ -96,14 +96,10 @@ function WPN:GetPowerModuleMultiplier()
 end
 
 if SERVER then
-    local shieldedSounds = {
-        "weapons/physcannon/energy_disintegrate4.wav",
-        "weapons/physcannon/energy_disintegrate5.wav"
-    }
 
     function WPN:CreateDamageInfo(target, damage)
         if not IsValid(target) then return nil end
-        
+
         local dmg = DamageInfo()
         dmg:SetDamageType(DMG_BLAST)
         dmg:SetDamage(damage)
@@ -162,45 +158,12 @@ if SERVER then
     end
 
     function WPN:OnHit(room)
-        local shields = room:GetUnitShields()
         local damage = self:GetBaseDamage()
         local ratio = self:GetPierceRatio()
         local mult = self:GetShieldMultiplier()
 
-        util.ScreenShake(room:GetPos(), math.sqrt(damage * 0.5), math.random() * 4 + 3, 1.5, 768)
+		room:GetShip():DoRoomDamage(damage, room, ratio, mult)
 
-		room:SetLastDamage(CurTime())
-		
-        room:SetUnitShields(shields - math.min(shields, damage * mult) * (1 - ratio))
-        damage = damage - (shields / mult) * (1 - ratio)
-
-        if damage > 0 then
-            for _, ent in pairs(room:GetEntities()) do
-                local dmg = self:CreateDamageInfo(ent, damage)
-                if dmg then
-                    dmg:SetAttacker(room)
-                    dmg:SetInflictor(room)
-                    ent:TakeDamageInfo(dmg)
-                end
-            end
-
-            for _, pos in pairs(room:GetTransporterTargets()) do
-                timer.Simple(math.random() * 0.5, function()
-                    local ed = EffectData()
-                    ed:SetOrigin(pos)
-                    ed:SetScale(1)
-                    util.Effect("Explosion", ed)
-                end)
-            end
-        else
-            sound.Play(table.Random(shieldedSounds), room:GetPos(), 100, 70)
-
-            local effects = room:GetDamageEffects()
-            local count = math.max(1, #effects * math.random() * 0.5)
-            for i = 1, count do
-                effects[i]:PlayEffect()
-            end
-        end
     end
 elseif CLIENT then
     function WPN:GetFullName()
