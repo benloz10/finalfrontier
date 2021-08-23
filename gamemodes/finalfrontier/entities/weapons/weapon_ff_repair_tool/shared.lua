@@ -1,17 +1,17 @@
 -- Copyright (c) 2014 Michael Ortmann [micha.ortmann@yahoo.de]
--- 
+--
 -- This file is part of Final Frontier.
--- 
+--
 -- Final Frontier is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU Lesser General Public License as
 -- published by the Free Software Foundation, either version 3 of
 -- the License, or (at your option) any later version.
--- 
+--
 -- Final Frontier is distributed in the hope that it will be useful,
 -- but WITHOUT ANY WARRANTY; without even the implied warranty of
 -- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 -- GNU General Public License for more details.
--- 
+--
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
@@ -43,6 +43,8 @@ SWEP.MAX_DISTANCE = 128
 SWEP.THINK_STEP = 0.1
 SWEP.nextThinkStamp = CurTime()+SWEP.THINK_STEP
 
+function SWEP:PrimaryAttack() return false end --This stops the repair tool from making the 'Out of Ammo' sound   
+
 function SWEP:SetupDataTables()
 
 	self:NetworkVar( "Int", 0, "RepairMode" )
@@ -53,17 +55,17 @@ function SWEP:SetupDataTables()
 end
 
 function SWEP:Initialize()
-    self:SetRepairMode(-1) 
-    self:SetGreenBoxes(0) 
-    self:SetBlueBoxes(0) 
-    self:SetUsingWelder(false) 
+    self:SetRepairMode(-1)
+    self:SetGreenBoxes(0)
+    self:SetBlueBoxes(0)
+    self:SetUsingWelder(false)
     self:SetRepairSpeed(5)
     if SERVER then
         concommand.Add( "ff_repair_speed", function(ply, cmd, args)
             self:SetRepairSpeed(args[1] or 5)
         end )
     end
-    
+
 end
 
 function SWEP:ShouldDropOnDie()
@@ -73,11 +75,11 @@ end
 function SWEP:SecondaryAttack()
     if SERVER then
         if self:GetRepairMode() == 0 then
-            self:SetRepairMode(1) 
+            self:SetRepairMode(1)
         elseif self:GetRepairMode() == 1 then
-            self:SetRepairMode(-1) 
+            self:SetRepairMode(-1)
         else
-            self:SetRepairMode(0) 
+            self:SetRepairMode(0)
         end
     end
 end
@@ -86,24 +88,24 @@ function SWEP:Think()
     if (CurTime()<self.nextThinkStamp) then return end
     if (self:GetUsingWelder()) then
         local trace = self.Owner:GetEyeTraceNoCursor()
-        
+
         local effectData = EffectData()
         effectData:SetOrigin( trace.HitPos )
         effectData:SetNormal( trace.HitNormal )
-        util.Effect( "stunstickimpact", effectData, true, true )    
+        util.Effect( "stunstickimpact", effectData, true, true )
     end
-    
+
     self.nextThinkStamp = CurTime()+self.THINK_STEP
 end
-    
+
 if SERVER then
     util.AddNetworkString( "usingWelder" )
     util.AddNetworkString( "manipulateModule" )
-    
+
     net.Receive( "usingWelder", function( len, ply )
-        local self = ply:GetWeapon( "weapon_ff_repair_tool" ) 
+        local self = ply:GetWeapon( "weapon_ff_repair_tool" )
         if (!self) then return end
-        
+
         self:SetUsingWelder(net.ReadBit()==1)
         if (self:GetUsingWelder()) then
             ply.weldingSound = CreateSound(ply, "ambient/machines/electric_machine.wav")
@@ -112,67 +114,68 @@ if SERVER then
             ply.weldingSound:Stop()
         end
     end )
-    
+
     net.Receive( "manipulateModule", function( len, ply )
-        local self = ply:GetWeapon( "weapon_ff_repair_tool" ) 
+        local self = ply:GetWeapon( "weapon_ff_repair_tool" )
         if (!self) then return end
-        
+
         local ent = net.ReadEntity()
         local gridx = net.ReadInt(4)
         local gridy = net.ReadInt(4)
-        
+
         if (self:GetRepairMode() == -1) then
             if (ent._grid[gridx][gridy] == 0) then
-                self:SetGreenBoxes(self:GetGreenBoxes() + 1 ) 
+                self:SetGreenBoxes(self:GetGreenBoxes() + 1 )
             elseif (ent._grid[gridx][gridy] == 1) then
                 self:SetBlueBoxes(self:GetBlueBoxes() + 1 )
             end
         else
-            if (self:GetRepairMode() == 0) then 
-                self:SetGreenBoxes(self:GetGreenBoxes() - 1 ) 
+            if (self:GetRepairMode() == 0) then
+                self:SetGreenBoxes(self:GetGreenBoxes() - 1 )
             elseif (self:GetRepairMode() == 1) then
-                self:SetBlueBoxes(self:GetBlueBoxes() - 1 ) 
+                self:SetBlueBoxes(self:GetBlueBoxes() - 1 )
             end
         end
-        
+
         ent:SetTile(gridx, gridy, self:GetRepairMode())
     end )
 end
+
 if CLIENT then
     SWEP.timestampCompleted = 0
-    SWEP.manEntity = nil
-    SWEP.manX = nil
-    SWEP.manY = nil
+    SWEP.manEntity, SWEP.manX, SWEP.manY = nil
+
     function SWEP:Think()
         if CurTime() < self.nextThinkStamp
-            or LocalPlayer() ~= self.Owner 
-            or LocalPlayer():GetActiveWeapon() ~= self then return end
+        or LocalPlayer() ~= self.Owner 
+        or LocalPlayer():GetActiveWeapon() ~= self then return end
         
         local trace = self.Owner:GetEyeTraceNoCursor()
-        
-        if (input.IsMouseDown( MOUSE_LEFT ) && self.Owner:GetShootPos():Distance(trace.HitPos)<self.MAX_DISTANCE) then
+
+        if(!vgui.CursorVisible() and input.IsMouseDown( MOUSE_LEFT ) and self.Owner:GetShootPos():Distance(trace.HitPos)<self.MAX_DISTANCE and trace) then
+            if(trace.Entity:GetClass() != "prop_ff_module") then return end
+            
             local possible, gridx, gridy, ent = self:actionTrace()
+
             if (!self:GetUsingWelder()) then
                 net.Start( "usingWelder" )
-                    net.WriteBit( true )
+                net.WriteBit( true )
                 net.SendToServer()
             end
-            if (!self:actionTrace()) then 
-                self.timestampCompleted = 0 
-                self.manEntity = nil
-                self.manX = nil
-                self.manY = nil
+
+            if(!self:actionTrace()) then
+                self.timestampCompleted = 0
+                self.manEntity, self.manX, self.manY = nil
             else
-                if (self.manEntity == ent && self.manX == gridx && self.manY == gridy) then
-                    if (CurTime()>self.timestampCompleted) then
+
+                if(self.manEntity == ent && self.manX == gridx && self.manY == gridy) then
+                    if(CurTime()>self.timestampCompleted) then
                         net.Start( "manipulateModule" )
-                            net.WriteEntity( self.manEntity )
-                            net.WriteInt( self.manX, 4)
-                            net.WriteInt( self.manY, 4)
+                        net.WriteEntity( self.manEntity )
+                        net.WriteInt( self.manX, 4)
+                        net.WriteInt( self.manY, 4)
                         net.SendToServer()
-                        self.manEntity = nil
-                        self.manX = nil
-                        self.manY = nil
+                        self.manEntity, self.manX, self.manY = nil
                     end
                 else
                     self.manEntity = ent 
@@ -181,17 +184,15 @@ if CLIENT then
                     self.timestampCompleted = CurTime() + self:GetRepairSpeed()
                 end
             end
-        elseif (self:GetUsingWelder()) then
+        elseif(self:GetUsingWelder()) then
             net.Start( "usingWelder" )
-                net.WriteBit( false )
+            net.WriteBit( false )
             net.SendToServer()
-            self.manEntity = nil
-            self.manX = nil
-            self.manY = nil
+            self.manEntity, self.manX, self.manY = nil
         end
         self.nextThinkStamp = CurTime()+self.THINK_STEP
     end
-    
+
     local matScreen     = Material( "models/weapons/v_toolgun/screen" )
 
     -- GetRenderTarget returns the texture if it exists, or creates it if it doesn't
@@ -212,16 +213,16 @@ if CLIENT then
             screen's rendertarget texture.
     -----------------------------------------------------------]]
     function SWEP:RenderScreen()
-        
+
         local TEX_SIZE = 256
         local oldW = ScrW()
         local oldH = ScrH()
-        
+
         -- Set the material of the screen to our render target
         matScreen:SetTexture( "$basetexture", rtTexture )
-        
+
         local oldRT = render.GetRenderTarget()
-        
+
         -- Set up our view for drawing to the texture
         render.SetRenderTarget( rtTexture )
         render.SetViewPort( 0, 0, TEX_SIZE, TEX_SIZE )
@@ -233,8 +234,8 @@ if CLIENT then
                 backgroundColor = Color( 51, 172, 45, 255 )
                 textNumber = self:GetGreenBoxes()
             elseif self:GetRepairMode() == 1 then
-                backgroundColor = Color( 45, 51, 172, 255 ) 
-                textNumber = self:GetBlueBoxes() 
+                backgroundColor = Color( 45, 51, 172, 255 )
+                textNumber = self:GetBlueBoxes()
             else
                 backgroundColor = Color( 172, 45, 51, 255 )
 
@@ -242,12 +243,12 @@ if CLIENT then
             end
             surface.SetDrawColor( backgroundColor )
             surface.DrawRect( 0, 0, TEX_SIZE, TEX_SIZE )
-            
+
             self:drawShadowedText(text, TEX_SIZE / 2, 32, "RepairToolDesc")
             if textNumber != false then
                 self:drawShadowedText(textNumber, TEX_SIZE / 2, TEX_SIZE / 2, "RepairToolNumber")
             end
-            
+
             local totbars = 10
             local barspacing = 2
             local width = TEX_SIZE - 8
@@ -256,7 +257,7 @@ if CLIENT then
             if (self:GetUsingWelder()) then
                 bars = math.Clamp(((CurTime()-self.timestampCompleted+self:GetRepairSpeed())/self:GetRepairSpeed()) * totbars,0,totbars)
             end
-            
+
             surface.SetDrawColor(Color(100, 100, 100, 255))
 
             local possible = self:actionTrace()
@@ -270,23 +271,23 @@ if CLIENT then
         cam.End2D()
         render.SetRenderTarget( oldRT )
         render.SetViewPort( 0, 0, oldW, oldH )
-        
+
     end
-    
+
     function SWEP:drawShadowedText(text, x, y, font)
-        draw.SimpleText( text, font, x + 3, y + 3, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER ) 
-        
-        draw.SimpleText( text, font, x , y , Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER ) 
+        draw.SimpleText( text, font, x + 3, y + 3, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+
+        draw.SimpleText( text, font, x , y , Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
-    
+
     function SWEP:actionTrace()
         local trace = self.Owner:GetEyeTraceNoCursor()
-        if (trace.Entity:GetClass()=="prop_ff_module") then 
+        if (trace.Entity:GetClass()=="prop_ff_module") then
             local gridx, gridy = trace.Entity:GetPlayerTargetedTile(LocalPlayer())
             if (!gridx || !gridy) then return false end
-            
+
             local grid = trace.Entity:GetGrid()
-            
+
             if (self:GetRepairMode() == -1 && grid[gridx][gridy] >= 0) then
                 return true, gridx, gridy, trace.Entity
             elseif ( self:GetRepairMode() >= 0 && grid[gridx][gridy] < 0 ) then
@@ -296,6 +297,4 @@ if CLIENT then
             end
         end
     end
-    
 end
-
