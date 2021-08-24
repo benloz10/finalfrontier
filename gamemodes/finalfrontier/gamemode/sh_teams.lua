@@ -80,7 +80,7 @@ if SERVER then
 			ply:ChatPrint( "You must wait " .. math.Round(lastTeamSwitch - CurTime(), 1) .. " seconds to switch teams." )
 		end
 	end
-	concommand.Add("TEAM_1", TEAM_1)
+	concommand.Add("ff_team1", TEAM_1)
 	 
 	 
 	function TEAM_2( ply )
@@ -95,7 +95,7 @@ if SERVER then
 			ply:ChatPrint( "You must wait " .. math.Round(lastTeamSwitch - CurTime(), 1) .. " seconds to switch teams." )
 		end
 	end
-	concommand.Add("TEAM_2", TEAM_2)
+	concommand.Add("ff_team2", TEAM_2)
 	
 elseif CLIENT then
     function team.Think()
@@ -134,7 +134,7 @@ elseif CLIENT then
 		end
 		
 		team_1.DoClick = function()
-			RunConsoleCommand( "TEAM_1" )
+			RunConsoleCommand( "ff_team1" )
 			TeamMenu:Close()
 		end
 		
@@ -151,7 +151,7 @@ elseif CLIENT then
 		end
 		
 		team_2.DoClick = function()
-			RunConsoleCommand( "TEAM_2" )
+			RunConsoleCommand( "ff_team2" )
 			TeamMenu:Close()
 		end
 		
@@ -172,13 +172,13 @@ elseif CLIENT then
 	
 	end
 	
-	concommand.Add("TeamMenu", TeamMenu)
+	concommand.Add("ff_teammenu", TeamMenu)
 	 
 end
 
 function GM:OnPlayerChat( ply, text, teamChat, isDead )
 	if text == "!ffteam" then
-		RunConsoleCommand("TeamMenu")
+		RunConsoleCommand("ff_teammenu")
 		return true
 	end
 end
