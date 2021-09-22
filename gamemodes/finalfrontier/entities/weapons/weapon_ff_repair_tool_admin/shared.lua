@@ -97,8 +97,7 @@ if SERVER then
     util.AddNetworkString( "usingWelderA" )
     util.AddNetworkString( "manipulateModuleA" )
     util.AddNetworkString( "DoTheShootDammit" )
-    util.AddNetworkString("zooom")
-    util.AddNetworkString("unzooom")
+    util.AddNetworkString("zoom")
 
     net.Receive( "usingWelderA", function( len, ply )
         local self = ply:GetWeapon( "weapon_ff_repair_tool_admin" )
@@ -142,12 +141,12 @@ if SERVER then
         pl:GetWeapon("weapon_ff_repair_tool_admin"):ShootBullet(1742,1,0,"Pistol",5,1)
     end)
 
-    net.Receive("zooom", function(zoom, pl)
-        pl:SetRunSpeed(800)
-    end)
-
-    net.Receive("unzooom", function(zoom, pl)
-        pl:SetRunSpeed(250)
+    net.Receive("zoom", function(zoom, pl)
+        if(net.ReadBit() == 1) then
+            pl:SetRunSpeed(800)
+        else
+            pl:SetRunSpeed(250)
+        end
     end)
 end
 
@@ -165,7 +164,7 @@ if CLIENT then
 
         if(!vgui.CursorVisible() and input.IsMouseDown( MOUSE_LEFT ) and self:GetRepairModeA() <= 1 and self.Owner:GetShootPos():Distance(trace.HitPos)<self.MAX_DISTANCE and trace) then
             if(trace.Entity:GetClass() != "prop_ff_module") then return end
-            
+
             local possible, gridx, gridy, ent = self:actionTrace()
 
             if (!self:GetUsingWelderA()) then
@@ -208,12 +207,28 @@ if CLIENT then
                 net.SendToServer()
         end
 
-        if(!vgui.CursorVisible() and self.Owner:KeyDown(IN_RELOAD)) then
-            net.Start("zooom")
+        if(!vgui.CursorVisible() and self.Owner:KeyDown(IN_RELOAD) and !timer.Exists("wait")) then
+            if(ZoomToggle == 0) then
+                net.Start("zoom")
+                net.WriteBit(true)
+                net.SendToServer()
+                ZoomToggle = 1
+                timer.Create("wait",0.5,1,function() end)
+            elseif(ZoomToggle == 1) then
+                net.Start("zoom")
+                net.WriteBit(false)
+                net.SendToServer()
+                ZoomToggle = 0
+                timer.Create("wait",0.5,1,function() end)
+            end
+        end
+
+        function self:Holster( wep )
+            if not IsFirstTimePredicted() then return end
+            net.Start("zoom")
+            net.WriteBit(false)
             net.SendToServer()
-        else
-            net.Start("unzooom")
-            net.SendToServer()
+            ZoomToggle = 0
         end
 
         self.nextThinkStamp = CurTime()+self.THINK_STEP
