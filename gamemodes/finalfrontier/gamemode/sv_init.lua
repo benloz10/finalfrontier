@@ -30,6 +30,7 @@ include("sh_sgui.lua")
 include("sh_systems.lua")
 include("sv_ships.lua")
 include("sh_teams.lua")
+include("sh_races.lua")
 include("sv_cleanup.lua")
 include("sv_shipcollisions.lua")
 -- Resources
@@ -145,6 +146,7 @@ concommand.Add("ff_reset", function()
         ply:SetHealth(100)
         ply:SetArmor(100)
 		ply:SetPlyOxygen(100)
+        ply:SetNWString("class","human")
     end
 
     for _, ship in pairs(ships._dict) do
