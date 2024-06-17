@@ -17,6 +17,14 @@
 
 if SERVER then AddCSLuaFile("player_ff_default.lua") end
 
+PLAYER_RACES = {
+    ["human"] = {hp=100, armor=100, NiceName="Human", Description="Just a regular human."},
+    ["rockmen"] = {hp=150, armor=100, NiceName="Rockman", Description="Has more health."},
+    ["zoltan"] = {hp=80, armor = 100, NoOxygen = true, NiceName="Zoltan", Description="Powers the room they're in."},
+    ["lanius"] = {hp=100, armor = 100, NoOxygen = true, NiceName="Lanius", Description="Doesn't breath."}
+}
+
+
 local PLAYER = {}
 
 PLAYER.WalkSpeed            = 175
@@ -41,14 +49,6 @@ local _models = {
     "models/player/group03/female_05.mdl",
     "models/player/group03/female_06.mdl"
 }
-/*
-local _races = {
-    [1] = "human",
-    [2] = "rockmen",
-    [3] = "zoltan",
-    [4] = "lanius"
-}
-*/
 
 if SERVER then
     function PLAYER:Init()
@@ -80,15 +80,13 @@ if SERVER then
 			end
 		
 		end
+
+        self.Player:UpdateRace()
 		
 		self.Player:SetPlyMaxOxygen(100)
 		self.Player:SetPlyOxygen(self.Player:GetPlyMaxOxygen())
 		
         self.Player:SetCanWalk(true)
-        /*
-        self.Player:SetPlayerRace( table.Random(_race) )
-        print(self.Player:GetPlayerRace())
-        */
         TeleportArriveEffect(self.Player, self.Player:GetPos())
     end
 
@@ -106,9 +104,8 @@ function PLAYER:SetupDataTables()
     local ply = self.Player or self
 
     ply:NetworkVar("String", 0, "ShipName")
-    
-    ply:SetNWString("Race","human")
-    --ply:NetworkVar("String", 1, "PlayerRace" )
+
+    ply:NetworkVar("String", 1, "Race")
 
     ply:NetworkVar("Int", 0, "RoomIndex")
 	ply:NetworkVar("Int", 1, "PlyOxygen")
@@ -118,6 +115,9 @@ function PLAYER:SetupDataTables()
 
     ply:NetworkVar("Entity", 0, "CurrentScreen")
     ply:NetworkVar("Entity", 1, "OldWeapon")
+    if SERVER then
+        ply:SetRace("human")
+    end
 
     ply._permissions = ply:NetworkTable(0, "Permissions")
 end

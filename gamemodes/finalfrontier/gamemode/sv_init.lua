@@ -122,6 +122,7 @@ local RoundedDeathTime = 0
 function GM:PlayerDeathThink(ply)
 	if IsValid(ply) and ply.DeathTime < CurTime() then
 		ply:Spawn()
+        ply:UpdateRace()
 	else
 		RoundedDeathTime = math.Round(CurTime())+1
 		ply:SetNWInt("NWDeathTime", math.Round(ply.DeathTime+0.5 - CurTime()))
@@ -143,10 +144,8 @@ concommand.Add("ff_reset", function()
     end
 
     for k, ply in pairs(player.GetAll()) do
-        ply:SetHealth(100)
-        ply:SetArmor(100)
-		ply:SetPlyOxygen(100)
-        ply:SetNWString("class","human")
+        ply:UpdateRace("human")
+        ply:SetMaxOxygen(100)
     end
 
     for _, ship in pairs(ships._dict) do

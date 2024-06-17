@@ -82,28 +82,28 @@ function ShouldDraw()
     end
 end
 
-function drawCircle( x, y, radius, seg, hp )
+function drawCircle( x, y, radius, seg, val, maxval )
 	local cir = {}
 
 	table.insert( cir, { x = x, y = y, u = 0.5, v = 0.5 } )
 	for i = 0, seg do
-		local a = math.rad( (( i / seg ) * -math.Clamp((hp/100)*360, 0, 360))+180 )
+		local a = math.rad( (( i / seg ) * -math.Clamp((val/maxval)*360, 0, 360))+180 )
 		table.insert( cir, { x = x + math.sin( a ) * radius, y = y + math.cos( a ) * radius, u = math.sin( a ) / 2 + 0.5, v = math.cos( a ) / 2 + 0.5 } )
 	end
 	
 	surface.DrawPoly( cir )
 end
 
-function drawRadialBar(x,y,rad,hp,xoffset,yoffset,width, bgcolor, barcolor, barbgcolor)
+function drawRadialBar(x, y, rad, val, maxval, xoffset, yoffset, width, bgcolor, barcolor, barbgcolor)
 	draw.NoTexture()
 	surface.SetDrawColor(bgcolor)
-	drawCircle( x-xoffset, y+yoffset, rad+10, 40, 100 )
+	drawCircle( x-xoffset, y+yoffset, rad+10, 40, 1, 1 )
 	surface.SetDrawColor(barbgcolor)
-	drawCircle( x-xoffset, y+yoffset, rad, 40, 100 )
+	drawCircle( x-xoffset, y+yoffset, rad, 40, 1, 1 )
 	surface.SetDrawColor(barcolor)
-	drawCircle( x-xoffset, y+yoffset, rad, 40, hp )
+	drawCircle( x-xoffset, y+yoffset, rad, 40, val, maxval )
 	surface.SetDrawColor(bgcolor)
-	drawCircle( x-xoffset, y+yoffset, rad-width, 40, 100 )
+	drawCircle( x-xoffset, y+yoffset, rad-width, 40, 1, 1 )
 end
 
 local oldHealth = 100
@@ -113,7 +113,9 @@ local CanPress = true
 function GM:HUDPaint()
     local ply = LocalPlayer()
     local hp = ply:Health()
+	local maxhp = ply:GetMaxHealth()
     local oxygen = ply:GetPlyOxygen()
+	local maxoxy = ply:GetPlyMaxOxygen()
     
     local xoffset = 100
     local yoffset = 20
@@ -126,26 +128,26 @@ function GM:HUDPaint()
 	
 	
     if oldHealth != hp then
-        oldHealth = math.Clamp(math.Approach( oldHealth, hp, math.max( 0.02, math.abs( (hp - oldHealth)/20 ) ) ), 0, 100)
+        oldHealth = math.Clamp(math.Approach( oldHealth, hp, math.max( 0.02, math.abs( (hp - oldHealth)/20 ) ) ), 0, maxhp)
     end
     
     if oldOxy != oxygen then
-        oldOxy = math.Clamp(math.Approach( oldOxy, oxygen, math.max( 0.02, math.abs( (oxygen - oldOxy)/20 ) ) ), 0, 100)
+        oldOxy = math.Clamp(math.Approach( oldOxy, oxygen, math.max( 0.02, math.abs( (oxygen - oldOxy)/20 ) ) ), 0, maxhp)
     end
     
     if ShouldDraw() then
 		--Health
-			drawRadialBar(200, ScrH()-200, hprad, oldHealth, xoffset, yoffset, hpwidth, Color(55,55,60), Color(255,0,0), Color(150,0,0))
+			drawRadialBar(200, ScrH()-200, hprad, oldHealth, maxhp, xoffset, yoffset, hpwidth, Color(55,55,60), Color(255,0,0), Color(150,0,0))
 			draw.SimpleText( "HP", "LHUD_Font_Large", 200-xoffset,ScrH()-220+yoffset, Color(200,200,200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 			draw.SimpleText( math.Round(oldHealth), "LHUD_Font_Large", 200-xoffset,ScrH()-180+yoffset, Color(200,200,200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		--Oxygen
-			drawRadialBar(350, ScrH()-100, oxyrad, oldOxy, xoffset, yoffset, oxywidth, Color(55,55,60), Color(0,100,255), Color(0,50,150))
+			drawRadialBar(350, ScrH()-100, oxyrad, oldOxy, maxoxy, xoffset, yoffset, oxywidth, Color(55,55,60), Color(0,100,255), Color(0,50,150))
 			draw.SimpleText( "OXY", "LHUD_Font", 350-xoffset,ScrH()-115+yoffset, Color(200,200,200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 			draw.SimpleText( math.Round(oldOxy), "LHUD_Font", 350-xoffset,ScrH()-85+yoffset, Color(200,200,200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
         
     end
 	--Death screen
-	if ply:Health() <= 0 then
+	if ply:Health() <= 0 or not ply:Alive() then
 		surface.SetDrawColor(0,0,0,240)
 		surface.DrawRect(0,0,ScrW(),ScrH())
 		draw.SimpleText( "YOU ARE DEAD", "FF_Death_Font", ScrW()/2, 100, Color(180,0,0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
@@ -158,20 +160,13 @@ end
 
 local teamcol=Color( 0, 0, 0 )
 
-function IsCreator(ply)
-	if ply:SteamID() == "STEAM_0:1:30656417" then //Lawlypops
-		return true
-	else
-		return false
-	end
-end
+local DEVTABLE = {
+	["STEAM_0:1:30656417"] = true,  //Lawlypops
+	["STEAM_0:1:67321501"] = true //Nitro
+}
 
 function IsDev(ply)
-	if ply:SteamID() == "STEAM_0:1:67321501" then //Nitro
-		return true
-	else
-		return false
-	end
+	return DEVTABLE[ply:SteamID()] or false
 end
 
 function GM:PostDrawOpaqueRenderables()
@@ -183,13 +178,9 @@ function GM:PostDrawOpaqueRenderables()
 				draw.SimpleText( tr:Nick(), "CTextMedium", 0, 0, teamcol, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
 		cam.End3D2D()
 		
-		if IsDev(tr) or IsCreator(tr) then
+		if IsDev(tr) then
 			cam.Start3D2D(tr:GetPos() + Vector(0,0,75), ply:EyeAngles():Right():Angle() + Angle(0,0,90), 0.1)
-				if IsDev(tr) then
-					draw.SimpleText( "-DEV-", "CTextMedium", 0, 0, Color(255, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
-				else
-					draw.SimpleText( "~CREATOR~", "CTextMedium", 0, 0, Color(255, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
-				end
+			draw.SimpleText( "-DEV-", "CTextMedium", 0, 0, Color(255, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )
 			cam.End3D2D()
 		end
 	end
@@ -205,14 +196,6 @@ function GM:OnPlayerChat( ply, txt, Team, PlayerIsDead )
 		chat.AddText(Color(255, 50, 0, 255), "-DEV- *REKT* ", nickteamcolor, nickteam, Color(50, 50, 50, 255), "| ", nickteamcolor, ply:Nick(), color_white, ": ", Color(255, 255, 255, 255), txt)
 		end
 		return true
-	elseif IsCreator(ply) then
-		if ply:Alive() then
-		chat.AddText(Color(200, 0, 0, 255), "~CREATOR~ ", nickteamcolor, nickteam, Color(50, 50, 50, 255), "| ", nickteamcolor, ply:Nick(), color_white, ": ", Color(255, 255, 255, 255), txt)
-		else
-		chat.AddText(Color(200, 0, 0, 255), "~CREATOR~ *REKT* ", nickteamcolor, nickteam, Color(50, 50, 50, 255), "| ", nickteamcolor, ply:Nick(), color_white, ": ", Color(255, 255, 255, 255), txt)
-		end
-		return true
-	
 	elseif ply:IsAdmin() or ply:IsSuperAdmin() then
 		if ply:Alive() then
 		chat.AddText(Color(180, 0, 0, 255), "-ADMIN- ", nickteamcolor, nickteam, Color(50, 50, 50, 255), "| ", nickteamcolor, ply:Nick(), color_white, ": ", Color(255, 255, 255, 255), txt)

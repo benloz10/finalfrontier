@@ -218,15 +218,15 @@ function ENT:Think()
             dmg:SetAttacker(self)
             dmg:SetInflictor(self)
             for _, ply in pairs(self._players) do
+                local racetable = PLAYER_RACES[ply:GetRace()]
+                if racetable.NoOxygen then MsgN(racetable) continue end
                 if ply and ply:IsValid() and ply:Health() > 0 then
                     if ply:GetPlyOxygen() > 0 then
                         ply:SetPlyOxygen(math.Clamp(ply:GetPlyOxygen()- 1, 0, ply:GetPlyMaxOxygen()))
                     else
-                        if(ply:GetNWString("race") != "lanius") then
-                            ply:TakeDamageInfo(dmg)
-                            if sounds then
-                                ply:EmitSound(table.Random(sounds), SNDLVL_IDLE, 100)
-                            end
+                        ply:TakeDamageInfo(dmg)
+                        if sounds then
+                            ply:EmitSound(table.Random(sounds), SNDLVL_IDLE, 100)
                         end
                     end
                 end
