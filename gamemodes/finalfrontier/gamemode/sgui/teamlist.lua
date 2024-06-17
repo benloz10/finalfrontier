@@ -69,6 +69,6 @@ if CLIENT then
 		//surface.DrawRect( 5, 5, 300, 500 )
 		ItemPlayerList()
 	end
-end
 
-hook.Add("HUDPaint", "ff_drawplayers", paintList)
+	hook.Add("HUDPaint", "ff_drawplayers", paintList)
+end

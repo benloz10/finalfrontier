@@ -42,13 +42,14 @@ local _models = {
     "models/player/group03/female_06.mdl"
 }
 /*
-local _race = {
-    "human",
-    "rockmen",
-    "zoltan",
-    "lanius"
+local _races = {
+    [1] = "human",
+    [2] = "rockmen",
+    [3] = "zoltan",
+    [4] = "lanius"
 }
 */
+
 if SERVER then
     function PLAYER:Init()
         team.AutoAssign(self.Player)
@@ -105,7 +106,9 @@ function PLAYER:SetupDataTables()
     local ply = self.Player or self
 
     ply:NetworkVar("String", 0, "ShipName")
-    //ply:NetworkVar("String", 1, "PlayerRace" )
+    
+    ply:SetNWString("Race","human")
+    --ply:NetworkVar("String", 1, "PlayerRace" )
 
     ply:NetworkVar("Int", 0, "RoomIndex")
 	ply:NetworkVar("Int", 1, "PlyOxygen")

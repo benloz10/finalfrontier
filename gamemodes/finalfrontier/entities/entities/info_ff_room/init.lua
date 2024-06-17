@@ -222,10 +222,12 @@ function ENT:Think()
                     if ply:GetPlyOxygen() > 0 then
                         ply:SetPlyOxygen(math.Clamp(ply:GetPlyOxygen()- 1, 0, ply:GetPlyMaxOxygen()))
                     else
-                    ply:TakeDamageInfo(dmg)
-                    if sounds then
-                        ply:EmitSound(table.Random(sounds), SNDLVL_IDLE, 100)
-                    end
+                        if(ply:GetNWString("race") != "lanius") then
+                            ply:TakeDamageInfo(dmg)
+                            if sounds then
+                                ply:EmitSound(table.Random(sounds), SNDLVL_IDLE, 100)
+                            end
+                        end
                     end
                 end
             end
