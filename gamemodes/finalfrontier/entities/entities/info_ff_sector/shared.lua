@@ -50,7 +50,7 @@ if SERVER then
     local vertNames = {}
     for i = 1, 24 do vertNames[i] = tostring(i) end
 
-    local RESPAWN_DELAY = 60
+    local RESPAWN_DELAY = 600
 
     ENT._lastVisit = 0
 
@@ -76,13 +76,8 @@ if SERVER then
         self:Purge()
 
         local x, y = self:GetCoordinates()
-        local count, max = 0, math.ceil(math.random() * 8)
 
-        while math.random() < 0.25 and count < max do
-            count = count + 1
-        end
-
-        for i = 1, count do
+        if math.random() < 0.2 then
             local obj = ents.Create("info_ff_object")
             obj:SetCoordinates(x + math.random(), y + math.random())
             obj:Spawn()
