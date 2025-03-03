@@ -110,8 +110,6 @@ function GM:ScalePlayerDamage(ply, hitgroup, dmginfo)
     end
 end
 
-CreateConVar( "ff_respawndelay", 15, FCVAR_NONE, "Change the total amount of seconds the player must wait to respawn (Setting it lower than 1 will default to 1)" )
-
 function GM:PlayerDeath(ply)
 	ply.DeathTime = CurTime() + math.Clamp(GetConVarNumber("ff_respawndelay"),1,60)
 
