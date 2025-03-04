@@ -23,6 +23,9 @@ GUI.StatusDial = nil
 GUI.LeftIcon = nil
 GUI.RightIcon = nil
 
+GUI.CycleTime = -1
+GUI.CycleIndex = 0
+
 function GUI:Enter()
     self.Super[BASE].Enter(self)
 
@@ -44,7 +47,62 @@ function GUI:Enter()
 
         if CLIENT then
             self.LeftIcon.Material = self:GetSystemIcon()
-            self.RightIcon.Material = self:GetSystemIcon()
+            self:CycleIcons()
         end
     end
+end
+
+function GUI:Draw()
+    if CurTime() > self.CycleTime and self:GetSystem() then
+        self:CycleIcons()
+    end
+
+    self.Super[BASE].Draw(self)
+end
+
+function GUI:CycleIcons()
+    self.CycleTime = CurTime() + 1
+    self.CycleIndex = self.CycleIndex + 1
+
+    local CycleImages = {}
+    if self:CheckModuleDamaged(moduletype.SYSTEM_POWER) then
+        CycleImages[#CycleImages + 1] = Material("alertpower.png")
+    end
+    if self:CheckModuleDamaged(moduletype.SHIELDS) then
+        CycleImages[#CycleImages + 1] = Material("alertshield.png")
+    end
+    if self:CheckModuleDamaged(moduletype.LIFE_SUPPORT) then
+        CycleImages[#CycleImages + 1] = Material("alertlifesupport.png")
+    end
+
+    if #CycleImages == 0 then
+        self.RightIcon.Material = self:GetSystemIcon()
+        self.RightIcon.Color = color_white
+        return
+    end
+
+
+    if self.CycleIndex > #CycleImages then
+        self.CycleIndex = 1 -- If we've cycled through everything, circle back
+    end
+
+    
+    self.RightIcon.Material = CycleImages[self.CycleIndex]
+    self.RightIcon.Color = Color(173,41,47)
+end
+
+function GUI:SetIcons(material, color)
+    print(material)
+    self.LeftIcon.Material = material
+    self.RightIcon.Material = material
+    self.LeftIcon.Color = color
+    self.RightIcon.Color = color
+end
+
+function GUI:CheckModuleDamaged(moduletocheck)
+    local module = self:GetRoom():GetModule(moduletocheck)
+    if not module then
+        return true -- No module inserted
+    end
+    return module:GetDamaged() > 0
 end
