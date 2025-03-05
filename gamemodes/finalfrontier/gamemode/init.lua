@@ -16,6 +16,7 @@
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
 AddCSLuaFile("cl_init.lua")
+AddCSLuaFile("cl_colors.lua")
 AddCSLuaFile("cl_door.lua")
 AddCSLuaFile("cl_room.lua")
 AddCSLuaFile("cl_ship.lua")
