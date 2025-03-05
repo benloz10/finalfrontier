@@ -272,7 +272,7 @@ if CLIENT then
             freeNode.CanClick = false
             local last = self._start
             local toSwap = nil
-            surface.SetDrawColor(Color(255, 255, 255, 32))
+            surface.SetDrawColor(COLORS.DarkGrey)
             for i, index in ipairs(self._currSequence) do
                 local node = self._nodes[index]
                 node.Enabled = true
@@ -307,7 +307,7 @@ if CLIENT then
                     local nx, ny = next:GetGlobalCentre()
                     local x = lx + (nx - lx) * dt
                     local y = ly + (ny - ly) * dt
-                    surface.SetDrawColor(Color(255, 255, 255, 255))
+                    surface.SetDrawColor(color_white)
                     surface.DrawCircle(x, y, math.cos((CurTime() - self._overrideStartTime)
                         * math.pi * 2 / self._timePerNode) * 4 + 16)
                 end

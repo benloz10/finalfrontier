@@ -26,6 +26,7 @@ include("sh_transform2d.lua")
 include("sh_weapons.lua")
 include("sh_sgui.lua")
 include("sh_systems.lua")
+include("cl_colors.lua")
 include("cl_door.lua")
 include("cl_room.lua")
 include("cl_ship.lua")
@@ -126,6 +127,8 @@ function GM:Initialize()
 end
 
 function GM:Think()
+    COLORS.Warning.a = Pulse(1) * 63 + 32
+    
     for _, ply in ipairs(player.GetAll()) do
         if IsValid(ply) and ply ~= LocalPlayer() and not ply.dt then
             ply:InstallDataTable()

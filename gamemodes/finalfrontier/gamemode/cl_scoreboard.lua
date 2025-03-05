@@ -42,10 +42,10 @@ function DrawListItem(w, ply, xoffset, playersincolumn)
 	end
 	
 	draw.RoundedBox( 6, xpos, ypos, w/2-14,35, teamcol )
-	draw.SimpleText( ply:Nick(), "FF_Scoreboard", xpos+4, ypos + 17, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-	draw.SimpleText( ply:Frags(), "FF_Scoreboard", xpos+300, ypos + 17, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-	draw.SimpleText( ply:Deaths(), "FF_Scoreboard", xpos+350, ypos + 17, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-	draw.SimpleText( ply:Ping(), "FF_Scoreboard", xpos+400, ypos + 17, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+	draw.SimpleText( ply:Nick(), "FF_Scoreboard", xpos+4, ypos + 17, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+	draw.SimpleText( ply:Frags(), "FF_Scoreboard", xpos+300, ypos + 17, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+	draw.SimpleText( ply:Deaths(), "FF_Scoreboard", xpos+350, ypos + 17, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+	draw.SimpleText( ply:Ping(), "FF_Scoreboard", xpos+400, ypos + 17, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 end
 
 local shouldDraw = false
@@ -58,24 +58,24 @@ function GM:HUDDrawScoreBoard()
 		local xpos = (ScrW()/2)-450
 		
 		//Main BG
-		draw.RoundedBox( 4, xpos, 180, width, height, Color(55,60,60,150))
+		draw.RoundedBox( 4, xpos, 180, width, height, COLORS.DarkGrey)
 		//Orange (Left)
-		draw.RoundedBox( 4, xpos, 180, (width/2)-4, height, Color(48,50,55,150))
+		draw.RoundedBox( 4, xpos, 180, (width/2)-4, height, COLORS.DarkGrey)
 		//Blue (Right)
-		draw.RoundedBox( 4, xpos+454, 180, (width/2)-4, height, Color(48,50,55,150))
+		draw.RoundedBox( 4, xpos+454, 180, (width/2)-4, height, COLORS.DarkGrey)
 		//Overline
-		draw.RoundedBox( 4, xpos, 240, width, 6, Color(32,34,38,255))
+		draw.RoundedBox( 4, xpos, 240, width, 6, color_black)
 		
 		//Labels Left Side
-		draw.SimpleText( "Name", "FF_Scoreboard", xpos+10, 220, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-		draw.SimpleText( "K", "FF_Scoreboard", xpos+312, 220, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-		draw.SimpleText( "D", "FF_Scoreboard", xpos+362, 220, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-		draw.SimpleText( "Ping", "FF_Scoreboard", xpos+412, 220, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Name", "FF_Scoreboard", xpos+10, 220, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "K", "FF_Scoreboard", xpos+312, 220, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "D", "FF_Scoreboard", xpos+362, 220, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Ping", "FF_Scoreboard", xpos+412, 220, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		//Labels Right Side
-		draw.SimpleText( "Name", "FF_Scoreboard", xpos+10+454, 220, Color( 255, 255, 255 ), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-		draw.SimpleText( "K", "FF_Scoreboard", xpos+312+454, 220, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-		draw.SimpleText( "D", "FF_Scoreboard", xpos+362+454, 220, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
-		draw.SimpleText( "Ping", "FF_Scoreboard", xpos+412+454, 220, Color( 255, 255, 255 ), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Name", "FF_Scoreboard", xpos+10+454, 220, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "K", "FF_Scoreboard", xpos+312+454, 220, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "D", "FF_Scoreboard", xpos+362+454, 220, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		draw.SimpleText( "Ping", "FF_Scoreboard", xpos+412+454, 220, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 		
 		local bluePlayers = 0
 		local orangePlayers = 0

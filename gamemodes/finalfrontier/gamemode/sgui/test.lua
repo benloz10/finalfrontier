@@ -33,10 +33,10 @@ if CLIENT then
     function GUI:Draw()
         local x, y = self:GetPos()
 
-        surface.SetDrawColor(Color(255, 0, 0, 255))
+        surface.SetDrawColor(color_red)
         surface.DrawCircle(x, y, 64)
 
-        surface.SetTextColor(Color(255, 255, 255, 255))
+        surface.SetTextColor(color_white)
         surface.SetFont("CTextLarge")
 
         if self.Player then

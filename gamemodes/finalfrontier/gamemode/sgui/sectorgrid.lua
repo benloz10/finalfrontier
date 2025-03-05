@@ -241,7 +241,7 @@ elseif CLIENT then
         render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_ALWAYS)
         render.SetStencilReferenceValue(1)
 
-        surface.SetDrawColor(Color(0, 0, 0, 255))
+        surface.SetDrawColor(color_black)
         surface.DrawRect(self:GetGlobalRect())
 
         render.SetStencilCompareFunction(STENCILCOMPARISONFUNCTION_EQUAL)
@@ -253,7 +253,7 @@ elseif CLIENT then
         local sensor = ship:GetSystem("sensors")
 
         if sensor then
-            surface.SetDrawColor(Color(255, 255, 255, 2))
+            surface.SetDrawColor(COLORS.BasicallyBlack)
             surface.DrawCircle(sx + ox, sy + oy, sensor:GetBaseScanRange() * self._curScale)
         
             if sensor:IsScanning() then
@@ -266,7 +266,7 @@ elseif CLIENT then
 
         local piloting = ship:GetSystem("piloting")
         if piloting and piloting:IsAccelerating() then
-            surface.SetDrawColor(Color(51, 172, 45, 127))
+            surface.SetDrawColor(COLORS.Green)
             if piloting:IsFullStopping() then
                 local size = Pulse(1) * 4 + 16
                 surface.DrawOutlinedRect(sx + ox - size, sy + oy - size, size * 2, size * 2)
@@ -285,7 +285,7 @@ elseif CLIENT then
 
         vx, vy = self:CoordinateToScreen(vx, vy)
 
-        surface.SetDrawColor(Color(255, 255, 255, 16))
+        surface.SetDrawColor(COLORS.DarkGrey)
         self:DrawArrow(sx + ox, sy + oy, vx + ox, vy + oy, 5)
         
         local closest = self:GetNearestObject(self:GetLocalCursorPos())
@@ -298,12 +298,12 @@ elseif CLIENT then
 				
                 if obj == closest then
                     scale = 1 + Pulse(1)
-                    surface.SetDrawColor(Color(255, 255, 255, 4))
+                    surface.SetDrawColor(COLORS.BasicallyBlack)
                     surface.DrawCircle(sx + ox, sy + oy, 16)
 					local jumpCharge = obj:GetJumpCharge()
 					if ot == objtype.SHIP and not obj:GetIsCloakedShip() then
 						surface.SetFont( "HudHintTextSmall" )
-						surface.SetTextColor( 255, 255, 255, 255 )
+						surface.SetTextColor( color_white )
 						surface.SetTextPos( sx + ox+15, sy + oy-5 )
 						surface.DrawText( obj:GetDescription() .. "|Operational")
 						surface.SetTextPos( sx + ox+15, sy + oy+5 )
@@ -318,20 +318,20 @@ elseif CLIENT then
                     if ot == objtype.SHIP then
 						
 						if obj:GetIsJumpingShip() and obj != closest then
-							surface.SetDrawColor(Color(255, 255, 255, 4))
+							surface.SetDrawColor(COLORS.BasicallyBlack)
 							surface.DrawCircle(sx + ox, sy + oy, (20*math.sin(CurTime())) * scale)
 						end
                         surface.SetMaterial(SHIP_ICON)
                         if obj == ship:GetObject() then
-                            surface.SetDrawColor(Color(51, 172, 45, 255))
+                            surface.SetDrawColor(COLORS.Green)
                         else 
-                            surface.SetDrawColor(Color(172, 45, 51, 191))
+                            surface.SetDrawColor(COLORS.Red)
                         end
 						
 						
                     elseif ot == objtype.MISSILE then
                         surface.SetMaterial(MISSILE_ICON)
-                        surface.SetDrawColor(Color(172, 45, 51, 191))
+                        surface.SetDrawColor(COLORS.Red)
                     end
                     if ot == objtype.SHIP or ot == objtype.MISSILE then
                         surface.DrawTexturedRectRotated(sx + ox, sy + oy,
@@ -339,7 +339,7 @@ elseif CLIENT then
                         draw.NoTexture()
                     end
                 end
-                    surface.SetDrawColor(Color(172, 45, 51, 90))
+                    surface.SetDrawColor(COLORS.TransparentRed)
                     if ot == objtype.MODULE or ot == objtype.BOMB or obj:GetIsCloakedShip() then
                         surface.DrawRect(sx + ox - 4 * scale, sy + oy - 4 * scale,
                             8 * scale, 8 * scale)
@@ -349,7 +349,7 @@ elseif CLIENT then
             end
         end
 
-        surface.SetDrawColor(Color(255, 255, 255, 2))
+        surface.SetDrawColor(COLORS.BasicallyBlack)
         for i = math.ceil(l), math.floor(r) do
             local j = (i - x) * self._curScale + self:GetWidth() * 0.5
             surface.DrawLine(ox + j, oy, ox + j, oy + self:GetHeight())
@@ -358,7 +358,7 @@ elseif CLIENT then
             local j = (i - y) * self._curScale + self:GetHeight() * 0.5
             surface.DrawLine(ox, oy + j, ox + self:GetWidth(), oy + j)
         end
-        surface.SetDrawColor(Color(255, 255, 255, 127))
+        surface.SetDrawColor(COLORS.MediumGrayT)
         surface.DrawOutlinedRect(self:GetGlobalRect())
 
         render.SetStencilEnable(false)

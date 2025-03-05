@@ -118,7 +118,7 @@ elseif CLIENT then
 		TeamMenu:SetDraggable( false )
 		TeamMenu:MakePopup( )
 		function TeamMenu:Paint()
-			draw.RoundedBox( 8, 0, 0, self:GetWide(), self:GetTall(), Color( 0,0,0,200 ) )
+			draw.RoundedBox( 8, 0, 0, self:GetWide(), self:GetTall(), COLORS.TransparentBlack )
 		end 
 		
 		
@@ -126,7 +126,7 @@ elseif CLIENT then
 		team_1:SetPos( 5, 30 )
 		team_1:SetSize( 250, 30 )
 		team_1:SetText( "Team 1" )
-		team_1:SetTextColor( Color(255, 255, 255) )
+		team_1:SetTextColor( color_white )
 		
 		team_1.Paint = function()
 			surface.SetDrawColor( team.GetColor(1) )
@@ -143,7 +143,7 @@ elseif CLIENT then
 		team_2:SetPos( 5, 70 )
 		team_2:SetSize( 250, 30 )
 		team_2:SetText( "Team 2" )
-		team_2:SetTextColor( Color(255, 255, 255) )
+		team_2:SetTextColor( color_white )
 		
 		team_2.Paint = function()
 			surface.SetDrawColor( team.GetColor(2) )

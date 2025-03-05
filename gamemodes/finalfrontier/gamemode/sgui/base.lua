@@ -260,9 +260,9 @@ if CLIENT then
     function GUI:Draw()
         if not sgui.IsDebug() then return end
         
-        local color = Color(255, 0, 0, 255)
+        local color = COLORS.Red
         if self:GetScreen():GetBeingUsed() and self:IsPointInside(self:GetCursorPos()) then
-            color = Color(0, 255, 0, 255)
+            color = COLORS.Green
         end
 
         surface.SetTextColor(color)

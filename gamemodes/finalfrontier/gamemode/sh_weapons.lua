@@ -56,7 +56,7 @@ elseif CLIENT then
     function _mt:GetTierName()
         return "Mk " .. tostring(self:GetTier())
     end
-    function _mt:GetColor() return Color(255, 255, 255, 255) end
+    function _mt:GetColor() return color_white end
 end
 
 MsgN("Loading weapons...")

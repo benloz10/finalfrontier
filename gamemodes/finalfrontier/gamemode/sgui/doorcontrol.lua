@@ -48,7 +48,7 @@ function GUI:Enter()
             end
         elseif CLIENT then
             function room.GetRoomColor(room)
-                return Color(0, 0, 0, 255)
+                return color_black
             end
         end
     end

@@ -343,7 +343,7 @@ elseif CLIENT then
         draw.NoTexture()
 
         cam.Start3D2D(self:GetPos() + ang:Up() * 11, ang, 0.5)
-            surface.SetDrawColor(Color(0, 0, 0, 255))
+            surface.SetDrawColor(color_black)
             surface.DrawRect(-24, -24, 48, 48)
 
             if self:IsGridLoaded() then
@@ -355,20 +355,20 @@ elseif CLIENT then
                         local val = grid[i][j]
 
                         if val == 0 then
-                            surface.SetDrawColor(Color(51, 172, 45, 255))
+                            surface.SetDrawColor(COLORS.Green)
                             surface.DrawRect(x - 4, y - 4, 8, 8)
                         elseif val == 1 then
-                            surface.SetDrawColor(Color(45, 51, 172, 255))
+                            surface.SetDrawColor(COLORS.Blue)
                             surface.DrawRect(x - 4, y - 4, 8, 8)
                         else
-                            surface.SetDrawColor(Color(172, 45, 51, Pulse(1) * 63 + 32))
+                            surface.SetDrawColor(COLORS.Warning)
                             surface.DrawRect(x - 4, y - 4, 8, 8)
                         end
                     end
                 end
             end
 
-            surface.SetDrawColor(Color(255, 255, 255, 16))
+            surface.SetDrawColor(COLORS.DarkGrey)
             surface.SetMaterial(modulematerials[self:GetModuleType() + 1])
             surface.DrawTexturedRect(-20, -20, 40, 40)
         cam.End3D2D()

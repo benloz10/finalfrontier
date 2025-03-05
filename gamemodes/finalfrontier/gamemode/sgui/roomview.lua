@@ -153,18 +153,18 @@ elseif CLIENT then
             end
             
             if self.CanClick and self:IsCursorInside() then
-                surface.SetDrawColor(Color(255, 255, 255, 16))
+                surface.SetDrawColor(COLORS.DarkGrey)
                 for i, poly in ipairs(self._polys) do
                     surface.DrawPoly(poly)
                 end
             end
 
-            surface.SetDrawColor(Color(255, 255, 255, 32))
+            surface.SetDrawColor(COLORS.Grey)
             for _, v in ipairs(self._details) do
                 surface.DrawLine(v.a.x, v.a.y, v.b.x, v.b.y)
             end
 
-            surface.SetDrawColor(Color(255, 255, 255, 255))
+            surface.SetDrawColor(color_white)
             last = self._corners[#self._corners]
             lx, ly = last.x, last.y
             for _, v in ipairs(self._corners) do
@@ -176,15 +176,15 @@ elseif CLIENT then
             if sys then
                 if sys.Icon then
                     surface.SetMaterial(sys.Icon)
-                    surface.SetDrawColor(Color(255, 255, 255, 32))
+                    surface.SetDrawColor(COLORS.Grey)
                     surface.DrawTexturedRect(self._iconBounds:GetRect())
                 end
 
                 if sys.Powered and sys:GetPower() < sys:GetPowerNeeded() - 0.005
                     and Pulse(1) >= 0.5 then
                     surface.SetMaterial(POWER)
-                    surface.SetDrawColor(LerpColour(Color(255, 44, 33, 255),
-                        Color(255, 219, 89, 255),
+                    surface.SetDrawColor(LerpColour(COLORS.OffRed,
+                        COLORS.DarkYellow,
                         sys:GetPower() / sys:GetPowerNeeded()))
                     surface.DrawTexturedRect(self._iconBounds:GetRect())
                 end
@@ -194,9 +194,9 @@ elseif CLIENT then
             for _, ply in pairs(player.GetAll()) do
                 if ply:IsInRoom(self._room) then
                     if ply == LocalPlayer() then
-                        surface.SetDrawColor(Color(51, 172, 45, 255))
+                        surface.SetDrawColor(COLORS.Green)
                     else
-                        surface.SetDrawColor(Color(172, 45, 51, 255))
+                        surface.SetDrawColor(COLORS.Red)
                     end
 
                     local pos = ply:GetPos()

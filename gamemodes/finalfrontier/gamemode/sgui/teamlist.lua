@@ -37,12 +37,12 @@ if CLIENT then
 				surface.SetDrawColor( team.GetColor(ply:Team()) )
 				surface.DrawRect( 7, 7+YOffset, 296, 36 )
 				local roomText = roomNames[ply:GetRoomIndex()] or "Unkown"
-				draw.SimpleText( ply:Nick(), "LHUD_Font", 9, 25+YOffset, Color(255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-				draw.SimpleText( roomText, "LHUD_Font_Small", 14, 55+YOffset, Color(255,255,255), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
-				surface.SetDrawColor( 100, 0, 0 )
+				draw.SimpleText( ply:Nick(), "LHUD_Font", 9, 25+YOffset, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+				draw.SimpleText( roomText, "LHUD_Font_Small", 14, 55+YOffset, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+				surface.SetDrawColor( COLORS.DarkRed )
 				surface.DrawRect( 150, 15+YOffset, 115, 20 )
 				surface.DrawPoly(HPBGTri)
-				surface.SetDrawColor( 200, 0, 0 )
+				surface.SetDrawColor( COLORS.OffRed )
 				surface.DrawRect( 150, 15+YOffset, math.Clamp((ply:Health()/80), 0, 1) * 115, 20 )
 				
 				
@@ -57,7 +57,7 @@ if CLIENT then
 					surface.DrawPoly( HPTri )
 				end
 				if ply:Health() <= 0 then
-					draw.SimpleText( "Respawn in: " .. ply:GetNWInt("NWDeathTime"), "LHUD_Font_Small", 310, 25+YOffset, Color(200,0,0), TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
+					draw.SimpleText( "Respawn in: " .. ply:GetNWInt("NWDeathTime"), "LHUD_Font_Small", 310, 25+YOffset, COLORS.OffRed, TEXT_ALIGN_LEFT, TEXT_ALIGN_CENTER )
 				end
 				PlayerCount = PlayerCount+1
 			end

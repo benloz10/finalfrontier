@@ -15,7 +15,6 @@
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
-local BLACK = Color(0, 0, 0, 255)
 local BASE = "container"
 
 GUI.BaseName = BASE

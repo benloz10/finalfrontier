@@ -108,7 +108,7 @@ if CLIENT then
 		warn:SetText("WARNING: CHANGING RACE WILL KILL YOU!")
 		warn:DockMargin(0,0,0,5)
 		warn:SetFont("CTextTiny")
-		warn:SetTextColor(Color(255,0,0))
+		warn:SetTextColor(color_red)
 		warn:SetContentAlignment(5)
 
 
@@ -116,11 +116,11 @@ if CLIENT then
 		close_button:Dock(BOTTOM)
 		close_button:SetTall(20)
 		close_button:SetText("Close")
-        close_button:SetColor(Color(255,255,255,255))
+        close_button:SetColor(color_white)
 		close_button:DockMargin(0,10,0,0)
 
 		function PNL:Paint()
-			draw.RoundedBox(8,0,0,self:GetWide(),self:GetTall(),Color(0,0,0,200))
+			draw.RoundedBox(8,0,0,self:GetWide(),self:GetTall(),COLORS.TransparentBlack)
 		end
 
 		for k, tbl in pairs(PLAYER_RACES) do
@@ -132,7 +132,7 @@ if CLIENT then
 
 		
 		function close_button:Paint()
-			draw.RoundedBox(8,0,0,close_button:GetWide(),close_button:GetTall(),Color(150,0,0,225))
+			draw.RoundedBox(8,0,0,close_button:GetWide(),close_button:GetTall(),COLORS.DarkRed)
 			surface.DrawRect(0,0,close_button:GetWide(),close_button:GetTall())
 		end
 		

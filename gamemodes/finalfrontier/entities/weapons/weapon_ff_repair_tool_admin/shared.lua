@@ -272,16 +272,16 @@ if CLIENT then
             local text = "REPAIR"
             local textNumber = false
             if self:GetRepairModeA() == 0 then
-                backgroundColor = Color( 51, 172, 45, 255 )
+                backgroundColor = COLORS.Green
                 textNumber = self:GetGreenBoxesA()
             elseif self:GetRepairModeA() == 1 then
-                backgroundColor = Color( 45, 51, 172, 255 )
+                backgroundColor = COLORS.Blue
                 textNumber = self:GetBlueBoxesA()
             elseif self:GetRepairModeA() == 2 then
-                backgroundColor = Color(240,125,255)
+                backgroundColor = COLORS.Pink
                 text = "'REPAIR' ;)"
             else
-                backgroundColor = Color( 172, 45, 51, 255 )
+                backgroundColor = COLORS.Red
 
                 text = "REMOVE"
             end
@@ -302,11 +302,11 @@ if CLIENT then
                 bars = math.Clamp(((CurTime()-self.timestampCompleted)) * totbars,0,totbars)
             end
 
-            surface.SetDrawColor(Color(100, 100, 100, 255))
+            surface.SetDrawColor(COLORS.MediumGrey)
 
             local possible = self:actionTrace()
             for i = 0, bars - 1 do
-                    if (possible) then surface.SetDrawColor(LerpColour(Color(255, 255, 255, 255), Color(255, 255, 159, 255), Pulse(0.5, -i / totbars / 4))) end
+                    if (possible) then surface.SetDrawColor(LerpColour(color_white, COLORS.Yellow, Pulse(0.5, -i / totbars / 4))) end
 
                 surface.DrawRect(8 + i * barsize,
                     TEX_SIZE - 40, barsize - barspacing, 32)
@@ -319,9 +319,9 @@ if CLIENT then
     end
 
     function SWEP:drawShadowedText(text, x, y, font)
-        draw.SimpleText( text, font, x + 3, y + 3, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        draw.SimpleText( text, font, x + 3, y + 3, color_black, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
 
-        draw.SimpleText( text, font, x , y , Color(255, 255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+        draw.SimpleText( text, font, x , y , color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
     end
 
     function SWEP:actionTrace()

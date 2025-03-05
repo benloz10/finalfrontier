@@ -240,10 +240,10 @@ elseif CLIENT then
 			local dest = self:GetSystem():GetJumpCharge()/100
 
 			local cloakStatus = "Disengaged"
-			local cloakColor = Color(155,25,0)
+			local cloakColor = COLORS.Red
 			if self:GetShip():GetObject():GetIsCloakedShip() then
 				cloakStatus = "Engaged"
-				cloakColor = Color(25,155,0)
+				cloakColor = COLORS.Green
 			end
 			self._cloakButton.Text = "Cloak: Currently " .. cloakStatus
 			self._cloakButton.Color = cloakColor
@@ -253,9 +253,9 @@ elseif CLIENT then
 			local reactor = self:GetShip():GetSystem("reactor")
 
 			local availpower = reactor:GetTotalPower() - reactor:GetTotalSupplied()
-			local jumpColor = Color(155,25,0)
+			local jumpColor = COLORS.Red
 			if self:GetSystem():GetJumpPowerNeeded() <= availpower then
-				jumpColor = Color(25,155,0)
+				jumpColor = COLORS.Green
 			end
 
 			self._jumpLabel.Text = "Jump Power: " .. math.Round(self:GetSystem():GetJumpPowerNeeded(), 2) .. "/" .. math.Round(availpower, 2)

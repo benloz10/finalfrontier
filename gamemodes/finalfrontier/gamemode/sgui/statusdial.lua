@@ -70,22 +70,22 @@ if CLIENT then
 
         self._dialRadius = radius
 
-        surface.SetDrawColor(Color(172, 45, 51, 255))
+        surface.SetDrawColor(COLORS.Red)
         surface.DrawPoly(self._innerCircle)
 
-        surface.SetDrawColor(Color(0, 0, 0, 255))
+        surface.SetDrawColor(color_black)
         surface.DrawRect(x - radius / 2, y - radius / 2, radius, radius * (1 - temp))
 
-        surface.SetDrawColor(Color(45, 51, 172, 255))
+        surface.SetDrawColor(COLORS.Blue)
         for _, v in ipairs(self._shldCircle) do
             surface.DrawPoly(v)
         end
-        surface.SetDrawColor(Color(51, 172, 45, 255))
+        surface.SetDrawColor(COLORS.Green)
         for _, v in ipairs(self._atmoCircle) do
             surface.DrawPoly(v)
         end
 
-        surface.SetDrawColor(Color(255, 255, 255, 255))
+        surface.SetDrawColor(color_white)
         surface.DrawRect(x - 2 * scale, y - radius, 4 * scale, 286 * scale)
 
         for i = -4, 4 do
@@ -97,7 +97,7 @@ if CLIENT then
         end
 
         local pwidth, pheight = self:GetWidth()/2 - radius, pwr * (self:GetHeight()/2)
-        surface.SetDrawColor(Color(128, 128, 128, 255))
+        surface.SetDrawColor(COLORS.MediumGrey)
         surface.DrawRect(x - radius - pwidth, y - pheight, pwidth, pheight * 2)
         surface.DrawRect(x + radius, y - pheight, pwidth, pheight * 2)
 

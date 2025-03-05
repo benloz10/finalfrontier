@@ -361,7 +361,7 @@ function ENT:_SetUIColor(value, dontUpdate)
 end
 
 function ENT:GetUIColor()
-    return self._nwdata.uicolor or Color(255, 255, 255, 255)
+    return self._nwdata.uicolor or color_white
 end
 
 function ENT:AddRoom(room)

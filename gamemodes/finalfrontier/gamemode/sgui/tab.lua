@@ -15,7 +15,6 @@
 -- You should have received a copy of the GNU Lesser General Public License
 -- along with Final Frontier. If not, see <http://www.gnu.org/licenses/>.
 
-local BLACK = Color(0, 0, 0, 255)
 local BASE = "base"
 
 GUI.BaseName = BASE
@@ -40,7 +39,7 @@ if CLIENT then
         surface.SetDrawColor(self.Color)
         if self:HasParent() and self:GetParent():GetCurrent() == self then
             surface.DrawRect(self:GetGlobalRect())
-            surface.SetTextColor(BLACK)
+            surface.SetTextColor(color_black)
         else
             if self.CanClick and self:IsCursorInside() then
                 surface.DrawOutlinedRect(self:GetGlobalRect())

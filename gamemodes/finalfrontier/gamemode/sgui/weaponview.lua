@@ -105,12 +105,12 @@ if CLIENT then
 
         if self:GetWeaponModule() then
             if self:GetWeaponModule():CanShoot() then
-                surface.SetDrawColor(Color(191 * r0 + 255 * r1, 191, 191, 255))
+                surface.SetDrawColor(191 * r0 + 255 * r1, 191, 191, 255)
             else
-                surface.SetDrawColor(Color(127 * r0 + 255 * r1, 127, 127, 255))
+                surface.SetDrawColor(127 * r0 + 255 * r1, 127, 127, 255)
             end
         else
-            surface.SetDrawColor(Color(32 * r0 + 64 * r1, 32, 32, 255))
+            surface.SetDrawColor(32 * r0 + 64 * r1, 32, 32, 255)
         end
         
         surface.DrawOutlinedRect(self:GetGlobalRect())
@@ -119,10 +119,10 @@ if CLIENT then
 
         if self.CanClick and self:IsCursorInside() and self:GetWeaponModule()
             and self:GetWeaponModule():CanShoot() then
-            surface.SetDrawColor(Color(255, 255 * r0 + 127 * r1, 255 * r0 + 127 * r1, 8))
+            surface.SetDrawColor(255, 255 * r0 + 127 * r1, 255 * r0 + 127 * r1, 8)
             surface.DrawRect(self:GetGlobalRect())
         elseif self:GetWeaponModule() then
-            surface.SetDrawColor(Color(255, 255 * r0 + 127 * r1, 255 * r0 + 127 * r1, 4))
+            surface.SetDrawColor(255, 255 * r0 + 127 * r1, 255 * r0 + 127 * r1, 4)
             surface.DrawRect(self:GetGlobalRect())
         end
     end

@@ -199,38 +199,35 @@ function ENT:IsPointInside(x, y)
 end
 
 if CLIENT then
-    
     function ENT:GetPlayerTarget(ply)
-    if CLIENT then
         ply = ply or LocalPlayer()
+
+        local ang = self:GetAngles()
+        ang:RotateAroundAxis(ang:Up(), -90)
+
+        local p0 = self:GetPos() + ang:Up() * 11
+        local n = ang:Up()
+        local l0 = ply:GetShootPos()
+        local l = ply:GetAimVector()
+        
+        local d = (p0 - l0):Dot(n) / l:Dot(n)
+
+        local hitpos = (l0 + l * d) - p0
+        local xvec = ang:Forward()
+        local yvec = ang:Right()
+        
+        local x = math.floor(hitpos:DotProduct(xvec) / 5) + 3
+        local y = math.floor(hitpos:DotProduct(yvec) / 5) + 3
+
+        if x < 1 or x > 4 or y < 1 or y > 4 then return nil end
+
+        return x, y
     end
 
-    local ang = self:GetAngles()
-    ang:RotateAroundAxis(ang:Up(), -90)
-
-    local p0 = self:GetPos() + ang:Up() * 11
-    local n = ang:Up()
-    local l0 = ply:GetShootPos()
-    local l = ply:GetAimVector()
-    
-    local d = (p0 - l0):Dot(n) / l:Dot(n)
-
-    local hitpos = (l0 + l * d) - p0
-    local xvec = ang:Forward()
-    local yvec = ang:Right()
-    
-    local x = math.floor(hitpos:DotProduct(xvec) / 5) + 3
-    local y = math.floor(hitpos:DotProduct(yvec) / 5) + 3
-
-    if x < 1 or x > 4 or y < 1 or y > 4 then return nil end
-
-    return x, y
-end
-
     function ENT:Draw()
-    self.BaseClass.Draw(self)
+        self.BaseClass.Draw(self)
     
-    ply = LocalPlayer()
+        ply = LocalPlayer()
     
         local TraceLine = util.TraceLine({start = ply:GetShootPos(), endpos = ply:GetAimVector() * 128 + ply:GetShootPos(), filter = ply})	
         local HitPosition = self:WorldToLocal(TraceLine.HitPos)
@@ -244,31 +241,30 @@ end
         draw.NoTexture()
         
         cam.Start3D2D(self:GetPos() + ang:Up() * 3.4, ang, 0.05)
-            surface.SetDrawColor(Color(0, 0, 0, 255))
+            surface.SetDrawColor(color_black)
             surface.DrawRect(-160, -135, 322, 243)
             if inrange(-7.5, 7.6, -6.3, -3.3, HitPosition.x, HitPosition.y ) then
-                surface.SetDrawColor(Color(150, 0, 0, 255))
+                surface.SetDrawColor(COLORS.DarkRed)
             else
-                surface.SetDrawColor(Color(255, 0, 0, 255))
+                surface.SetDrawColor(COLORS.Red)
             end
             surface.DrawRect(-150, -125, 302, 60)
-            draw.SimpleText("Arm", "CTextSmall", 0, -96, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(25, 25, 25, 100));
-            draw.SimpleText("Explosive Photon Device", "CTextTiny", 0, -40, Color(255, 0, 0), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(25, 25, 25, 100));
-            draw.SimpleText("___________________________", "CTextTiny", 0, -27, Color(255, 255, 255), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(25, 25, 25, 100));
-            draw.SimpleText("This device emits a large", "CTextTiny", 0, 5, Color(255, 200, 200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(25, 25, 25, 100));
-            draw.SimpleText("amount of charged photons", "CTextTiny", 0, 25, Color(255, 200, 200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(25, 25, 25, 100));
-            draw.SimpleText("that cause extreme damage", "CTextTiny", 0, 45, Color(255, 200, 200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(25, 25, 25, 100));
-            draw.SimpleText("to anyone inside it's LOS", "CTextTiny", 0, 65, Color(255, 200, 200), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(25, 25, 25, 100));
+            draw.SimpleText("Arm", "CTextSmall", 0, -96, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, COLORS.DarkGrey);
+            draw.SimpleText("Explosive Photon Device", "CTextTiny", 0, -40, color_red, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, COLORS.DarkGrey);
+            draw.SimpleText("___________________________", "CTextTiny", 0, -27, color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, COLORS.DarkGrey);
+            draw.SimpleText("This device emits a large", "CTextTiny", 0, 5, COLORS.LightRed, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, COLORS.DarkGrey);
+            draw.SimpleText("amount of charged photons", "CTextTiny", 0, 25, COLORS.LightRed, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, COLORS.DarkGrey);
+            draw.SimpleText("that cause extreme damage", "CTextTiny", 0, 45, COLORS.LightRed, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, COLORS.DarkGrey);
+            draw.SimpleText("to anyone inside it's LOS", "CTextTiny", 0, 65, COLORS.LightRed, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, COLORS.DarkGrey);
         cam.End3D2D()
         
         cam.Start3D2D(self:GetPos() + ang2:Up() * 6.5, ang2, 0.05)
-            surface.SetDrawColor(Color(0, 0, 0, 255))
+            surface.SetDrawColor(color_black)
             
             surface.DrawRect(-122, -44, 90, 84)
-            if not self:GetArmed() then
-                txtcolor=Color( 255, 255, 255 )
-            else
-                txtcolor=Color( 150, 0, 0 )
+            local txtcolor = color_white
+            if self:GetArmed() then
+                txtcolor = _ColorDarkRed
             end
             
             draw.SimpleText( self:GetTimer(), "CTextLarge", -77, -33, txtcolor, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP )

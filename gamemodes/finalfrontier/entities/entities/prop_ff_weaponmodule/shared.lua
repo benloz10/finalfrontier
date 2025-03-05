@@ -103,6 +103,7 @@ if SERVER then
         return slot:IsWeaponSlot() or slot:IsRepairSlot()
     end
 elseif CLIENT then
+
     function ENT:Think()
         if not IsValid(self) then return end
         
@@ -129,12 +130,12 @@ elseif CLIENT then
         local size = 24 / scale
         cam.Start3D2D(self:GetPos() + ang:Up() * 11, ang, scale)
 
-            surface.SetDrawColor(Color(0, 0, 0, 255))
+            surface.SetDrawColor(color_black)
             surface.DrawRect(-size / 2, -size / 2, size, size)
 
             if self._weapon then
 				local IconMat = 
-                surface.SetTextColor(Color(191, 191, 191, 255))
+                surface.SetTextColor(COLORS.LightGrey)
                 surface.SetFont("CTextLarge")
 
                 local text = self._weapon:GetFullName()
@@ -170,11 +171,11 @@ elseif CLIENT then
                 surface.SetTextPos(x, y)
                 surface.DrawText(text)
 
-                surface.SetDrawColor(Color(191, 191, 191, 255))
+                surface.SetDrawColor(COLORS.LightGrey)
                 surface.DrawOutlinedRect(-size / 2 + 8, size / 4 + 8, size - 16, size / 4 - 16)
 
                 if self:GetCharge() == 0 then
-                    surface.SetTextColor(Color(172, 45, 51, 255))
+                    surface.SetTextColor(COLORS.Red)
                     surface.SetFont("CTextSmall")
 
                     text = "NO CHARGE"
@@ -193,12 +194,12 @@ elseif CLIENT then
                     local bars = (self:GetCharge() / self._weapon:GetMaxCharge()) * totbars
 
                     if not self:CanShoot() then
-                        surface.SetDrawColor(Color(191, 191, 191, 255))
+                        surface.SetDrawColor(COLORS.LightGrey)
                     end
 
                     for i = 0, bars - 1 do
                         if self:CanShoot() then
-                            surface.SetDrawColor(LerpColour(Color(191, 191, 191, 255), Color(255, 255, 159, 255), Pulse(0.5, -i / totbars / 4)))
+                            surface.SetDrawColor(LerpColour(COLORS.LightGrey, COLORS.Yellow, Pulse(0.5, -i / totbars / 4)))
                         end
 
                         surface.DrawRect(-size / 2 + 16 + i * barsize, size / 4 + 16, barsize - barspacing, size / 4 - 32)

@@ -30,7 +30,7 @@ end
 if CLIENT then
     function GUI:Draw()
         if self:GetWeapon() then
-            surface.SetDrawColor(Color(63, 63, 63, 255))
+            surface.SetDrawColor(COLORS.MediumGrey)
             surface.DrawOutlinedRect(self:GetGlobalRect())
 
             local mdl = self:GetWeaponModule()
@@ -43,12 +43,12 @@ if CLIENT then
                 local bars = (mdl:GetCharge() / mdl:GetMaxCharge()) * totbars
 
                 if not mdl:CanShoot() then
-                    surface.SetDrawColor(Color(191, 191, 191, 255))
+                    surface.SetDrawColor(COLORS.LightGrey)
                 end
 
                 for i = 0, bars - 1 do
                     if mdl:CanShoot() then
-                        surface.SetDrawColor(LerpColour(Color(255, 255, 255, 255), Color(255, 255, 159, 255), Pulse(0.5, -i / totbars / 4)))
+                        surface.SetDrawColor(LerpColour(color_white, COLORS.Yellow, Pulse(0.5, -i / totbars / 4)))
                     end
 
                     surface.DrawRect(self:GetGlobalLeft() + 4 + i * barsize,

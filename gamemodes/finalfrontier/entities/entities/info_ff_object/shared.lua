@@ -257,11 +257,11 @@ elseif CLIENT then
 
     function ENT:GetSpaceFlare()
         if self:GetObjectType() == objtype.MODULE then
-            local flare = SpaceFlare(0.125, Color(127, 255, 255, 255))
+            local flare = SpaceFlare(0.125, COLORS.LightCyan)
             flare:SetPulse(1, 0.25)
             return { flare }
         elseif self:GetObjectType() == objtype.MISSILE then
-            local flare = SpaceFlare(0.125, Color(255, 0, 0, 255))
+            local flare = SpaceFlare(0.125, color_red)
             flare:SetPulse(0.25, 0.25)
             return { flare }
         elseif self:GetObjectType() == objtype.SHIP then
@@ -273,7 +273,7 @@ elseif CLIENT then
 
             return flares
         else
-            local flare = SpaceFlare(0.125, Color(0, 255, 0, 255))
+            local flare = SpaceFlare(0.125, color_green)
             flare:SetPulse(0.5, 0.25)
             return { flare }
         end

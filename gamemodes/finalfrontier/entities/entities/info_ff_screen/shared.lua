@@ -557,11 +557,11 @@ elseif CLIENT then
         x = math.floor(math.Clamp(x, -halfwidth + boxSize * 0.5, halfwidth - boxSize * 0.5))
         y = math.floor(math.Clamp(y, -halfheight + boxSize * 0.5, halfheight - boxSize * 0.5))
 
-        surface.SetDrawColor(Color(255, 255, 255, 16))
+        surface.SetDrawColor(COLORS.DarkGrey)
         surface.DrawLine(x, -halfheight, x, halfheight)
         surface.DrawLine(-halfwidth, y, halfwidth, y)
 
-        surface.SetDrawColor(Color(255, 255, 255, 64))
+        surface.SetDrawColor(COLORS.Grey)
         surface.DrawOutlinedRect(x - boxSize * 0.5, y - boxSize * 0.5, boxSize+1, boxSize+1)
     end
 

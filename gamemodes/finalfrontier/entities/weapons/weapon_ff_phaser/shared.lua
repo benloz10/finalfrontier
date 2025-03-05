@@ -143,6 +143,7 @@ function SWEP:SecondaryAttack()
 end
 
 if CLIENT then
+	SWEP._ColorWhite = Color(255, 255, 255)
 	function SWEP:DoDrawCrosshair(x, y)
 		local charge = self:GetCharge()
 		local inner = CreateHollowCircle(x, y, 16, 17, (1 - charge) * math.pi * 0.5, charge * math.pi)
@@ -158,7 +159,8 @@ if CLIENT then
 			surface.DrawPoly(v)
 		end
 
-		surface.SetDrawColor(Color(255, 255, 255, 32 + Pulse(0.25) * charge * 64))
+		self._ColorWhite.a = 32 + Pulse(0.25) * charge * 64
+		surface.SetDrawColor(self._ColorWhite)
 		surface.DrawRect(x, y - 2, 1, 4)
 
         for _, v in ipairs(inner) do

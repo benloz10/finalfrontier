@@ -22,15 +22,9 @@ GUI.BaseName = BASE
 if CLIENT then
     GUI.Color = Color(255, 255, 255, 255)
     GUI.Material = WHITE
-    GUI.Pulse = false
 
     function GUI:Draw()
         if self.Material then
-            if self.Pulse then
-                self.Color.a = Pulse(1) * 63 + 32
-            else
-                self.Color.a = 255
-            end
             surface.SetDrawColor(self.Color)
             surface.SetMaterial(self.Material)
             surface.DrawTexturedRect(
