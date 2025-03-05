@@ -30,7 +30,7 @@ GUI.WarningIcons = {}
 GUI.WarningIcons["power"] = Material("alertpower.png")
 GUI.WarningIcons["shield"] = Material("alertshield.png")
 GUI.WarningIcons["lifesupport"] = Material("alertlifesupport.png")
-GUI.WarningColor = Color(173,41,47)
+GUI.WarningColor = Color(172, 45, 51)
 
 function GUI:Enter()
     self.Super[BASE].Enter(self)
@@ -92,7 +92,7 @@ function GUI:CycleIcons()
         self.CycleIndex = 1 -- If we've cycled through everything, circle back
     end
 
-    
+    self.RightIcon.Pulse = true
     self.RightIcon.Material = CycleImages[self.CycleIndex]
     self.RightIcon.Color = self.WarningColor
 end
