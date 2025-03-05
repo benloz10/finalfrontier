@@ -156,6 +156,10 @@ if SERVER then
         self._ui = sgui.Create(self, MAIN_GUI_CLASS)
         self._ui:AllocateNewID()
         self:UpdateLayout()
+
+        if self._ui.Pages[page.SYSTEM] then
+            self._lastPage = page.SYSTEM -- If the screen has a system tab, go to there by default
+        end
     end
 
     function ENT:FreeGUIID(id)

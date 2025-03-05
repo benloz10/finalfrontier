@@ -50,7 +50,6 @@ function SWEP:SetupDataTables()
 	self:NetworkVar( "Int", 0, "RepairMode" )
 	self:NetworkVar( "Int", 1, "GreenBoxes" )
 	self:NetworkVar( "Int", 2, "BlueBoxes" )
-    self:NetworkVar( "Float", 0, "RepairSpeed" )
     self:NetworkVar( "Bool", 0, "UsingWelder" )
 end
 
@@ -59,13 +58,10 @@ function SWEP:Initialize()
     self:SetGreenBoxes(0)
     self:SetBlueBoxes(0)
     self:SetUsingWelder(false)
-    self:SetRepairSpeed(5)
-    if SERVER then
-        concommand.Add( "ff_repair_speed", function(ply, cmd, args)
-            self:SetRepairSpeed(args[1] or 5)
-        end )
-    end
+end
 
+function SWEP:GetRepairSpeed()
+    return GetConVar("ff_repair_speed"):GetFloat()
 end
 
 function SWEP:ShouldDropOnDie()

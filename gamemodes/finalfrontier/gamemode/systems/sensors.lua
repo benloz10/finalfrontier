@@ -93,7 +93,7 @@ if SERVER then
         self._nwdata.scanspeed = 2
         self._nwdata.scandelay = 5
         self._nwdata.scanstart = -1000
-        self._nwdata.autoscan = false
+        self._nwdata.autoscan = true
         self._nwdata:Update()
     end
 
